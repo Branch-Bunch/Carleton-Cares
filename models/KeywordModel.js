@@ -11,6 +11,6 @@ const keywordSchema = new Schema({
 	votes: [voteSchema]
 })
 
-const Topic  = mongoose.model('Topic', topicSchema, 'Topic')
+const Keyword = mongoose.model('Keyword', keywordSchema, 'Keyword')
 
-module.exports = Topic
+module.exports = Keyword
