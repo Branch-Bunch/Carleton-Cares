@@ -1,11 +1,14 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const topicSchema = new Schema({
-	name: {type: String, required: true},
-    title: {type: String, required: true},
-	uri: {type: String, required: true},
-    votes: {type: Number, required: true}
+cost voteSchema = new Schema({
+	sum: { type int, required: true },
+	time: { type String, required: true }
+}, {_id: false})
+
+const keywordSchema = new Schema({
+	word: { type: String, lowercase: true, required: true },
+	votes: [voteSchema]
 })
 
 const Topic  = mongoose.model('Topic', topicSchema, 'Topic')

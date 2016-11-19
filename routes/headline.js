@@ -3,7 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const Meme = require('../models/MemeModel.js')
+const Meme = require('../models/HeadlineModel.js')
 
 const router = express.Router()
 
