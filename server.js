@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const Promise = require('promise')
-const memeRoute = require('./routes/meme.js')
+const memeRoute = require('./routes/topic.js')
 
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGO_URI);
