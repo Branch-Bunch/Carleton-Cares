@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-cost voteSchema = new Schema({
-	sum: { type int, required: true },
-	time: { type String, required: true }
+const voteSchema = new Schema({
+    sum: { type: Number, required: true },
+	time: { type: String, required: true }
 }, {_id: false})
 
 const keywordSchema = new Schema({
@@ -11,6 +11,6 @@ const keywordSchema = new Schema({
 	votes: [voteSchema]
 })
 
-const Topic  = mongoose.model('Topic', topicSchema, 'Topic')
+const Keyword = mongoose.model('Keyword', keywordSchema, 'Keyword')
 
-module.exports = Topic
+module.exports = Keyword
