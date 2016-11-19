@@ -1,13 +1,16 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const memeSchema = new Schema({
-    title: {type: String, required: true},
-	description: {type: String, required: true},
-	uri: {type: String, required: true},
-    votes: {type: Number, required: true}
+const headlineSchema = new Schema({
+    author: { type: String },
+    title: { type: String, required: true },
+	description: { type: String, required: true },
+	url: { type: String, required: true },
+    urlToImage: { type: String },
+    votes: { type: Number, required: true },
+    publishedAt: { type: String }
 })
 
-const Meme = mongoose.model('Meme', memeSchema, 'Meme')
+const Headline = mongoose.model('Headline', headlineSchema, 'Headline')
 
-module.exports = Meme
+module.exports = Headline
