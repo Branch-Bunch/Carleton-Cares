@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-cost voteSchema = new Schema({
-	sum: { type int, required: true },
-	time: { type String, required: true }
+const voteSchema = new Schema({
+    sum: { type: Number, required: true },
+	time: { type: String, required: true }
 }, {_id: false})
 
 const keywordSchema = new Schema({
