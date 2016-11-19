@@ -23,7 +23,9 @@
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "google-trends-api": "^3.0.1",
-    "mongoose": "^4.6.8"
+    "mongoose": "^4.6.8",
+    "retext": "^4.0.0",
+    "retext-keywords": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
