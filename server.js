@@ -7,8 +7,7 @@ const Promise = require('promise')
 const memeRoute = require('./routes/meme.js')
 
 const mongoose = require('mongoose')
-var mongoUri = process.env.MONGOLAB_URI
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGO_URI);
 mongoose.Promise = Promise
 
 const PORT = 42069
