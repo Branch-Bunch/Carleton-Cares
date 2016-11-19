@@ -3,7 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const Meme = require('../models/HeadlineModel.js')
+const Headline = require('../models/HeadlineModel.js')
 
 const router = express.Router()
 
@@ -13,9 +13,9 @@ router.use(bodyParser.urlencoded({
 }))
 
 router.get('/', (req, res) => {
-    Meme.find().lean().then((memeList) => {
-        console.log(memeList)
-        res.send(memeList)
+    Headline.find().lean().then((headlineList) => {
+        console.log(headlineList)
+        res.send(headlineList)
     }).catch((err) => {
         console.log(err)
         res.status(500).end()
