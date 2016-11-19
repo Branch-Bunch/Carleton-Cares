@@ -1,0 +1,20 @@
+{
+  "name": "Wall-Of-Memes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MemeMasters/Wall-Of-Memes"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "homepage": "https://github.com/MemeMasters/Wall-Of-Memes#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
