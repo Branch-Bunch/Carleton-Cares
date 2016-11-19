@@ -38,3 +38,6 @@ jspm_packages
 
 #passwords
 .env
+
+#tests
+test.js
