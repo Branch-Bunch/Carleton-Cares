@@ -5,7 +5,8 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const Promise = require('promise')
-const headlineRoute= require('./routes/headline.js')
+const headlineRoute = require('./routes/headline.js')
+const keywordRoute = require('./routes/keyword.js')
 
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGO_URI);
@@ -18,3 +19,4 @@ app.listen(PORT, () => {
 })
 
 app.use('/headlines', headlineRoute)
+app.use('/keywords', keywordRoute)
