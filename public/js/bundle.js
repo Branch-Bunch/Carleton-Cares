@@ -21557,6 +21557,15 @@
 	            fetch('articles').then(function (res) {
 	                return res.json();
 	            }).then(function (articles) {
+	                articles = articles.sort(function (a, b) {
+	                    if (a.votes < b.votes) {
+	                        return 1;
+	                    } else if (a.votes > b.votes) {
+	                        return -1;
+	                    } else {
+	                        return 0;
+	                    }
+	                });
 	                _this2.setState({
 	                    articles: articles
 	                });
