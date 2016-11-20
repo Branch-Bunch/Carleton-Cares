@@ -105,7 +105,16 @@ router.post('/vote', (req, res) => {
     Article.findById(req.body.id).then((found) => {
         if (found.length) {
             found.votes = req.body.votes
-            found.save()
+            return found.save()
+        }
+        return false
+    }).then((data) => {
+        if (data) {
+            data.forEach((art) =>{
+                console.log(art.keywords)
+
+            })
+            // save keywords
         }
     })
 })
