@@ -33,9 +33,9 @@ router.get('/index', (req, res) => {
     })
 })
 
-router.get('/votes', (req, res) => {
-    console.log(req.query)
-    let word = req.query.word
+router.get(':word', (req, res) => {
+    console.log(req.params)
+    let word = req.params.word
     console.log(word)
     Keyword.find({word: word}).lean().then((wordList) => {
         console.log(wordList[0])
