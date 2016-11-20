@@ -111,9 +111,9 @@ router.post('/vote', (req, res) => {
     }).then((data) => {
         if (data) {
             console.log(data.keywords)
-            data.keywords.forEach((art) =>{
+            data.keywords.forEach((word) =>{
                 // save keywords, add to their points
-                console.log(art)
+                console.log(word)
 
             })
         }
