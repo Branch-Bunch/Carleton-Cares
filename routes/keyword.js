@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/index', (req, res) => {
-    let word = req.body.word
+    let word = req.params.word
     Keyword.find({word: word}).lean().then((wordList) => {
         console.log(wordList)
         res.send(wordList)
