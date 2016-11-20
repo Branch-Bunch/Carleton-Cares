@@ -8,7 +8,8 @@ const headlineSchema = new Schema({
 	url: { type: String, required: true },
     urlToImage: { type: String },
     votes: { type: Number, required: true },
-    publishedAt: { type: String }
+    publishedAt: { type: String },
+    keywords: [String]
 })
 
 const Headline = mongoose.model('Headline', headlineSchema, 'Headline')

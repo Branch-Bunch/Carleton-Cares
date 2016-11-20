@@ -4,7 +4,7 @@ const dotenv = require('dotenv').config()
 const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
-const headlineRoute = require('./routes/headline.js')
+const articleRoute = require('./routes/article.js')
 const keywordRoute = require('./routes/keyword.js')
 
 const mongoose = require('mongoose')
@@ -17,5 +17,5 @@ app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
 })
 
-app.use('/headlines', headlineRoute)
+app.use('/articles', articleRoute)
 app.use('/keywords', keywordRoute)
