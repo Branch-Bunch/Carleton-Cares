@@ -105,17 +105,17 @@ router.post('/vote', (req, res) => {
     Article.findById(req.body.id).then((found) => {
         if (!found.length) {
             found.votes += parseInt(req.body.vote, 10)
-            console.log(found.save())
-            //return found.save()
+            return found.save()
         }
         return false
     }).then((data) => {
         if (data) {
-            data.forEach((art) =>{
-                console.log(art.keywords)
+            console.log(data.keywords)
+            data.keywords.forEach((art) =>{
+                // save keywords, add to their points
+                console.log(art)
 
             })
-            // save keywords
         }
     })
 })
