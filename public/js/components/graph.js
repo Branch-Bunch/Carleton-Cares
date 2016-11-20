@@ -18,6 +18,7 @@ export default class Graph extends React.Component {
                 return res.json()
             })
             .then(dataPoints => {
+                console.log(dataPoints)
                 dataPoints = dataPoints.sort((a, b) => {
                     if (a.time > b.time) {
                         return 1
@@ -29,7 +30,7 @@ export default class Graph extends React.Component {
                 }).map(point => [point.time, point.sum])
                 console.log(dataPoints)
                 this.setState({
-                    dataPoints
+                    dataPoints: dataPoints
                 })
             })
             .catch(err => {
