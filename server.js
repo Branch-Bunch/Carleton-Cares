@@ -17,5 +17,6 @@ app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
 })
 
+app.use(express.static(__dirname + '/public'));
 app.use('/articles', articleRoute)
 app.use('/keywords', keywordRoute)
