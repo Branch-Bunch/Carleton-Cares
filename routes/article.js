@@ -3,7 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const Headline = require('../models/HeadlineModel.js')
+const Article = require('../models/ArticleModel.js')
 const request = require('request')
 const retext = require('retext')
 const retextkeywords = require('retext-keywords')
@@ -17,9 +17,9 @@ router.use(bodyParser.urlencoded({
 }))
 
 router.get('/', (req, res) => {
-    Headline.find().lean().then((headlineList) => {
-        console.log(headlineList)
-        res.send(headlineList)
+    Article.find().lean().then((articleList) => {
+        console.log(articleList)
+        res.send(articleList)
     }).catch((err) => {
         console.log(err)
         res.status(500).end()
@@ -63,12 +63,12 @@ function updateNews() {
             const headlines = JSON.parse(body).articles
             
             let articles = headlines.map((old) => {
-                let headline = {}
+                let art = {}
                 Object.keys(old).forEach((key) => {
-                    headline[key] = old[key]
+                    art[key] = old[key]
                 })
-                headline['keywords'] = getPhrases(headline)
-                console.log(headline)
+                art['keywords'] = getPhrases(art)
+                console.log(art)
             })
             // save articles
 
