@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/index', (req, res) => {
-    let word = req.params.word
+    let word = req.query.word
     Keyword.find({word: word}).lean().then((wordList) => {
         console.log(wordList)
         res.send(wordList)
@@ -34,10 +34,14 @@ router.get('/index', (req, res) => {
 })
 
 router.get('/votes', (req, res) => {
-    let word = req.params.word
+    console.log(req.query)
+    let word = req.query.word
+    console.log(word)
     Keyword.find({word: word}).lean().then((wordList) => {
-        console.log(wordList)
-        res.send(wordList.votes)
+        console.log(wordList[0])
+        console.log(wordList[0].votes)
+        console.log(word)
+        res.send(wordList[0].votes)
     }).catch((err) => {
         console.log(err)
         res.satus(500).end

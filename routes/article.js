@@ -136,8 +136,10 @@ router.post('/vote', (req, res) => {
                         console.log(`found========= ${found}`)
                         Object.keys(found).forEach((slot) => {
                             if (slot.word == word) {
-                                //let len = slot.votes.length
-                                //slot.votes[len] = slot.votes[len] + amount
+                                console.log(`SLOT ====== ${slot}`)
+                                let len = slot.votes.length
+                                let newVote = {sum: slot.votes[len - 1] + amount, time: Date.now()}
+                                slot.votes.push(newVote)
                                 return found.save()
                             }
                         })
