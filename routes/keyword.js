@@ -33,4 +33,15 @@ router.get('/index', (req, res) => {
     })
 })
 
+router.get('/votes', (req, res) => {
+    let word = req.params.word
+    Keyword.find({word: word}).lean().then((wordList) => {
+        console.log(wordList)
+        res.send(wordList.votes)
+    }).catch((err) => {
+        console.log(err)
+        res.satus(500).end
+    })
+})
+
 module.exports = router
