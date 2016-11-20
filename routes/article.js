@@ -103,9 +103,10 @@ router.post('/vote', (req, res) => {
     console.log(`votes modified by ${req.body.vote} for ${req.body.id}`)
     console.log(req.body)
     Article.findById(req.body.id).then((found) => {
-        if (found.length) {
-            found.votes = req.body.votes
-            return found.save()
+        if (!found.length) {
+            found.votes += parseInt(req.body.vote, 10)
+            console.log(found.save())
+            //return found.save()
         }
         return false
     }).then((data) => {
