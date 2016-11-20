@@ -33,7 +33,7 @@ router.get('/index', (req, res) => {
     })
 })
 
-router.get(':word', (req, res) => {
+router.get('/:word', (req, res) => {
     console.log(req.params)
     let word = req.params.word
     console.log(word)
