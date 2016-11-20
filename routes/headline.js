@@ -44,11 +44,15 @@ function getPhrases(article) {
     retext().use(retextkeywords).process(
         `${article.title} ${article.description}`, (err, file) => {
             file.data.keyphrases.forEach(function (phrase) {
-                words.push(phrase.matches[0].nodes.map(nlcstToString).join(''))
+                words.push(sanitize(phrase.matches[0].nodes.map(nlcstToString).join('')))
             })
     })
     //console.log(article)
     return words
+}
+
+function sanitize(string) {
+    return string.replace(/[^0-9a-zA-Z ,.]/g, '');
 }
 
 function updateNews() {
