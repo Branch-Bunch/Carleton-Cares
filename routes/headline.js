@@ -67,7 +67,7 @@ function updateNews() {
                 Object.keys(old).forEach((key) => {
                     headline[key] = old[key]
                 })
-                headline['Keywords'] = getPhrases(headline)
+                headline['keywords'] = getPhrases(headline)
                 console.log(headline)
             })
             // save articles
