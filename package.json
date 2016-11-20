@@ -25,6 +25,7 @@
     "google-trends-api": "^3.0.1",
     "mongoose": "^4.6.8",
     "nlcst-to-string": "^2.0.0",
+    "react-bootstrap": "^0.30.6",
     "request": "^2.79.0",
     "retext": "^4.0.0",
     "retext-keywords": "^3.0.0"

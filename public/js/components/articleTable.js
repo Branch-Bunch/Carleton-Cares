@@ -1,5 +1,6 @@
 import React from 'react'
 import Article from './article.js'
+import {Grid, Row, Col} from 'react-bootstrap'
 
 export default class ArticleTable extends React.Component {
     constructor(props) {
@@ -57,18 +58,15 @@ export default class ArticleTable extends React.Component {
         })
 
         return (
-            <table>
-                <thead>
-                    <tr>
-                        <th>ArticleNumber</th>
-                        <th>Article</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <Grid>
+                <Row>
+                    <Col md={1} mdOffset={1}><h3>Number</h3></Col>
+                    <Col md={5}><h3>Article</h3></Col>
+                </Row>
+                <Row>
                     {articles}
-                </tbody>
-            </table>
+                </Row>
+            </Grid>
         )
     }
 }

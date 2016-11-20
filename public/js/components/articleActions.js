@@ -1,4 +1,6 @@
 import React from 'react'
+import {Button,ButtonToolbar} from 'react-bootstrap'
+
 
 export default class ArticleAction extends React.Component {
     constructor(props) {
@@ -25,17 +27,11 @@ export default class ArticleAction extends React.Component {
 
     render() {
         return (
-            <div>
-                <button onClick={() => this.callVote(1)}>
-                    +
-                </button>
-                <button onClick={() => this.callVote(-1)}>
-                    -
-                </button>
-                <button>
-                    Show Trend
-                </button>
-            </div>
+            <ButtonToolbar>
+                <Button onClick={() => this.callVote(1)} bsStyle="success" bsSize="small">+</Button>
+                <Button onClick={() => this.callVote(-1)} bsStyle="danger" bsSize="small">-</Button>
+                <Button bsSize="small">Show Trend</Button>
+            </ButtonToolbar>
         )
     }
 }
