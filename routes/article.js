@@ -4,6 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const Article = require('../models/ArticleModel.js')
+const Keyword = require('../models/KeywordModel.js')
 const request = require('request')
 const retext = require('retext')
 const retextkeywords = require('retext-keywords')
@@ -102,9 +103,10 @@ router.get('/', (req, res) => {
 router.post('/vote', (req, res) => {
     console.log(`votes modified by ${req.body.vote} for ${req.body.id}`)
     console.log(req.body)
+    let amount = parseInt(req.body.vote, 10)
     Article.findById(req.body.id).then((found) => {
         if (!found.length) {
-            found.votes += parseInt(req.body.vote, 10)
+            found.votes += amount
             return found.save()
         }
         return false
@@ -113,16 +115,47 @@ router.post('/vote', (req, res) => {
             console.log(data.keywords)
             data.keywords.forEach((word) =>{
                 // save keywords, add to their points
+                word = word.toLowerCase()
                 console.log(word)
+                Keyword.find({word: word}).then((found) => {
+
+                    if (!found.length) {
+                        //console.log(found)
+                        let keyw = new Keyword()
+                        let novote = {sum: 0, time: Date.now()}
+                        keyw['votes'] = []
+                        keyw['votes'].push(novote)
+                        keyw['word'] = word
+                        console.log(word)
+                        return keyw.save()
+                    } else {
+                        //just update it
+                        console.log(found)
+                        let len = found.votes.length
+                        found.votes[len] = found.votes[len] + amount
+                        return found.save()
+                    }
+
+                })
 
             })
         }
     })
+    res.status(200).end()
 })
 
 router.get('/purge', (req, res) => {
     // update db from NewsAPI.org
     // not purging on main build
+})
+
+router.get('/keywords', (req, res) => {
+    Keyword.find().lean().then((wordList) =>{
+        res.send(wordList)
+    }).catch((err) => {
+        console.log(err)
+        res.satus(500).end
+    })
 })
 
 router.get('/dall', (req, res) => {
