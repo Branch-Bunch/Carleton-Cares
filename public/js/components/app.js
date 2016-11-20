@@ -1,7 +1,7 @@
 import React from 'react'
-import PostTable from './postTable.js'
+import ArticleTable from './articleTable.js'
 
-const posts = [
+const articles = [
     {
         author: 'Trump',
         title: 'Fuck her right in the pussy',
@@ -23,7 +23,7 @@ export default class App extends React.Component {
         return (
             <div>
                 <h1>Carleton Cares</h1>
-                <PostTable posts={posts}/>
+                <ArticleTable articles={articles}/>
             </div>
         )
     }

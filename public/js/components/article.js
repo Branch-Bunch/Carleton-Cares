@@ -1,19 +1,19 @@
 import React from 'react'
-import PostAction from './postActions.js'
+import ArticleAction from './articleActions.js'
 
-export default class Post extends React.Component {
+export default class Article extends React.Component {
     render() {
         return (
             <div>
                 <tr>
                     <td>
-                        {this.props.index + 1} 
+                        {this.props.index + 1}
                     </td>
                     <td>
-                        {this.props.title} 
+                        {this.props.title}
                     </td>
                     <td>
-                        <PostAction />
+                        <ArticleAction />
                     </td>
                 </tr>
                 <tr>

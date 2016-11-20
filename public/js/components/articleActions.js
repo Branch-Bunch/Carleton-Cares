@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default class PostAction extends React.Component {
+export default class ArticleAction extends React.Component {
     render() {
         return (
             <div>
