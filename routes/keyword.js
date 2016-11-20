@@ -22,4 +22,15 @@ router.get('/', (req, res) => {
     })
 })
 
+router.get('/index', (req, res) => {
+    let word = req.body.word
+    Keyword.find({word: word}).lean().then((wordList) => {
+        console.log(wordList)
+        res.send(wordList)
+    }).catch((err) => {
+        console.log(err)
+        res.satus(500).end
+    })
+})
+
 module.exports = router

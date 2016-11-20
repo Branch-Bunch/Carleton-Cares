@@ -31,6 +31,7 @@ function getWords(article) {
         `${article.title} ${article.description}`, (err, file) => {
             file.data.keywords.forEach((keyword) => {
                 // sanitize it
+                let word = sanitize(nlcstToString(keyword.matches[0].node))
                 words.push(nlcstToString(keyword.matches[0].node))
             })
     })
@@ -51,11 +52,13 @@ function getPhrases(article) {
 }
 
 function sanitize(string) {
+    string = string.toLowerCase()
     return string.replace(/[^0-9a-zA-Z ,.]/g, '');
 }
 
 function dropArticles() {
     Article.remove({}, () => {})
+    Keyword.remove({}, () => {})
 }
 
 function updateNews() {
@@ -130,10 +133,14 @@ router.post('/vote', (req, res) => {
                         return keyw.save()
                     } else {
                         //just update it
-                        console.log(found)
-                        let len = found.votes.length
-                        found.votes[len] = found.votes[len] + amount
-                        return found.save()
+                        console.log(`found========= ${found}`)
+                        Object.keys(found).forEach((slot) => {
+                            if (slot.word == word) {
+                                //let len = slot.votes.length
+                                //slot.votes[len] = slot.votes[len] + amount
+                                return found.save()
+                            }
+                        })
                     }
 
                 })
@@ -147,19 +154,11 @@ router.post('/vote', (req, res) => {
 router.get('/purge', (req, res) => {
     // update db from NewsAPI.org
     // not purging on main build
-})
-
-router.get('/keywords', (req, res) => {
-    Keyword.find().lean().then((wordList) =>{
-        res.send(wordList)
-    }).catch((err) => {
-        console.log(err)
-        res.satus(500).end
-    })
+    updateNews()
 })
 
 router.get('/dall', (req, res) => {
-    // dropArticles()
+
     // no
 })
 
