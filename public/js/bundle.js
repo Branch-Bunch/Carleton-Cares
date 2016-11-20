@@ -21477,20 +21477,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var articles = [{
-	    author: 'Trump',
-	    title: 'Fuck her right in the pussy',
-	    url: 'www.google.com',
-	    votes: 69,
-	    publishedAt: new Date().toISOString()
-	}, {
-	    author: 'Trump',
-	    title: 'Fuck her right in the pussy',
-	    url: 'www.google.com',
-	    votes: 69,
-	    publishedAt: new Date().toISOString()
-	}];
-
 	var App = function (_React$Component) {
 	    _inherits(App, _React$Component);
 
@@ -21511,7 +21497,7 @@
 	                    null,
 	                    'Carleton Cares'
 	                ),
-	                _react2.default.createElement(_articleTable2.default, { articles: articles })
+	                _react2.default.createElement(_articleTable2.default, null)
 	            );
 	        }
 	    }]);
@@ -21552,16 +21538,36 @@
 	var ArticleTable = function (_React$Component) {
 	    _inherits(ArticleTable, _React$Component);
 
-	    function ArticleTable() {
+	    function ArticleTable(props) {
 	        _classCallCheck(this, ArticleTable);
 
-	        return _possibleConstructorReturn(this, (ArticleTable.__proto__ || Object.getPrototypeOf(ArticleTable)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (ArticleTable.__proto__ || Object.getPrototypeOf(ArticleTable)).call(this, props));
+
+	        _this.state = {
+	            articles: []
+	        };
+	        return _this;
 	    }
 
 	    _createClass(ArticleTable, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var _this2 = this;
+
+	            fetch('articles').then(function (res) {
+	                return res.json();
+	            }).then(function (articles) {
+	                _this2.setState({
+	                    articles: articles
+	                });
+	            }).catch(function (err) {
+	                console.log('Error fetching articles', err);
+	            });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var articles = this.props.articles.map(function (article, index) {
+	            var articles = this.state.articles.map(function (article, index) {
 	                return _react2.default.createElement(_article2.default, {
 	                    key: index,
 	                    index: index,
