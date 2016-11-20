@@ -1,17 +1,19 @@
 import React from 'react'
 
-export default class Post extends React.Component {
+export default class PostAction extends React.Component {
     render() {
         return (
-            <button>
-                +
-            </button>
-            <button>
-                -
-            </button>
-            <button>
-                Show Trend
-            </button>
+            <div>
+                <button>
+                    +
+                </button>
+                <button>
+                    -
+                </button>
+                <button>
+                    Show Trend
+                </button>
+            </div>
         )
     }
 }
