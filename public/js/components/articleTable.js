@@ -10,7 +10,7 @@ export default class ArticleTable extends React.Component {
         }
     }
 
-    componentDidMount() {
+    refreshState() {
         fetch(`articles`)
             .then(res => {
                 return res.json()
@@ -25,6 +25,7 @@ export default class ArticleTable extends React.Component {
                         return 0
                     }
                 })
+                console.log('refresh')
                 this.setState({
                     articles
                 })
@@ -34,17 +35,23 @@ export default class ArticleTable extends React.Component {
             })
     }
 
+    componentDidMount() {
+        this.refreshState()
+    }
+
     render() {
         const articles = this.state.articles.map((article, index) => {
             return (
                 <Article
                     key={index}
+                    id={article._id}
                     index={index}
                     author={article.author}
                     title={article.title}
                     url={article.url}
                     votes={article.votes}
                     publishedAt={article.publishedAt}
+                    handleVote={this.refreshState.bind(this)}
                 />
             )
         })

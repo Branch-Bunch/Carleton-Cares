@@ -15,7 +15,10 @@ export default class Article extends React.Component {
                         </a>
                     </td>
                     <td>
-                        <ArticleAction />
+                        <ArticleAction 
+                            handleVote={this.props.handleVote}
+                            id={this.props.id}
+                        />
                     </td>
                 </tr>
                 <tr>

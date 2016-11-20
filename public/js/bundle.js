@@ -21550,8 +21550,8 @@
 	    }
 
 	    _createClass(ArticleTable, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
+	        key: 'refreshState',
+	        value: function refreshState() {
 	            var _this2 = this;
 
 	            fetch('articles').then(function (res) {
@@ -21566,6 +21566,7 @@
 	                        return 0;
 	                    }
 	                });
+	                console.log('refresh');
 	                _this2.setState({
 	                    articles: articles
 	                });
@@ -21574,17 +21575,26 @@
 	            });
 	        }
 	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.refreshState();
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this3 = this;
+
 	            var articles = this.state.articles.map(function (article, index) {
 	                return _react2.default.createElement(_article2.default, {
 	                    key: index,
+	                    id: article._id,
 	                    index: index,
 	                    author: article.author,
 	                    title: article.title,
 	                    url: article.url,
 	                    votes: article.votes,
-	                    publishedAt: article.publishedAt
+	                    publishedAt: article.publishedAt,
+	                    handleVote: _this3.refreshState.bind(_this3)
 	                });
 	            });
 
@@ -21691,7 +21701,10 @@
 	                    _react2.default.createElement(
 	                        'td',
 	                        null,
-	                        _react2.default.createElement(_articleActions2.default, null)
+	                        _react2.default.createElement(_articleActions2.default, {
+	                            handleVote: this.props.handleVote,
+	                            id: this.props.id
+	                        })
 	                    )
 	                ),
 	                _react2.default.createElement(
@@ -21752,26 +21765,55 @@
 	var ArticleAction = function (_React$Component) {
 	    _inherits(ArticleAction, _React$Component);
 
-	    function ArticleAction() {
+	    function ArticleAction(props) {
 	        _classCallCheck(this, ArticleAction);
 
-	        return _possibleConstructorReturn(this, (ArticleAction.__proto__ || Object.getPrototypeOf(ArticleAction)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (ArticleAction.__proto__ || Object.getPrototypeOf(ArticleAction)).call(this, props));
+
+	        _this.state = {
+	            clicked: false
+	        };
+	        return _this;
 	    }
 
 	    _createClass(ArticleAction, [{
+	        key: 'callVote',
+	        value: function callVote(vote) {
+	            var _this2 = this;
+
+	            fetch('articles/vote', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                },
+	                body: JSON.stringify({
+	                    vote: vote,
+	                    id: this.props.id
+	                })
+	            }).then(function (res) {
+	                return _this2.props.handleVote();
+	            });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this3 = this;
+
 	            return _react2.default.createElement(
 	                'div',
 	                null,
 	                _react2.default.createElement(
 	                    'button',
-	                    null,
+	                    { onClick: function onClick() {
+	                            return _this3.callVote(1);
+	                        } },
 	                    '+'
 	                ),
 	                _react2.default.createElement(
 	                    'button',
-	                    null,
+	                    { onClick: function onClick() {
+	                            return _this3.callVote(-1);
+	                        } },
 	                    '-'
 	                ),
 	                _react2.default.createElement(
