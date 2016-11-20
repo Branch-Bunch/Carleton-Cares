@@ -26,7 +26,7 @@ export default class Graph extends React.Component {
                     } else {
                         return 0
                     }
-                }).map(point => [point.time, point.vote])
+                }).map(point => [point.time, point.sum])
                 console.log(dataPoints)
                 this.setState({
                     dataPoints
@@ -42,8 +42,8 @@ export default class Graph extends React.Component {
             <div>
                 <Chart
                   chartType="AreaChart"
-
-                  data={[['Time', 'Popularity'], this.state.dataPoints]}
+                  //data={[['Time', 'Popularity'], this.state.dataPoints]}
+                  data={[['Time', 'Trump'], [1479651190606, 0], [1479651190706, 1], [1479651190806, 2], [1479651190906, 3], [1479651191006, 2]]}
                   options={{}}
                   graph_id="ScatterChart"
                   width="100%"
