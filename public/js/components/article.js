@@ -10,7 +10,9 @@ export default class Article extends React.Component {
                         {this.props.index + 1}
                     </td>
                     <td>
-                        {this.props.title}
+                        <a href={this.props.url}>
+                            {this.props.title}
+                        </a>
                     </td>
                     <td>
                         <ArticleAction />
