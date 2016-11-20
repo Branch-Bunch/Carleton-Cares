@@ -18,7 +18,6 @@ router.use(bodyParser.urlencoded({
 
 router.get('/', (req, res) => {
     Article.find().lean().then((articleList) => {
-        console.log(articleList)
         res.send(articleList)
     }).catch((err) => {
         console.log(err)
@@ -55,22 +54,36 @@ function sanitize(string) {
     return string.replace(/[^0-9a-zA-Z ,.]/g, '');
 }
 
+function dropArticles() {
+    Article.remove({}, () => {})
+}
+
 function updateNews() {
     // hourly
     const url = `${process.env.NEWS_URI}`
     request(url, (err, res, body) => {
         if (!err && res.statusCode == 200) {
             const headlines = JSON.parse(body).articles
-            
             let articles = headlines.map((old) => {
-                let art = {}
-                Object.keys(old).forEach((key) => {
-                    art[key] = old[key]
+                // save art
+                Article.find({url: old.url}).then((found) => {
+                    if (!found.length) {
+                        let art = new Article()
+                        Object.keys(old).forEach((key) => {
+                            art[key] = old[key]
+                        })
+                        art['keywords'] = getPhrases(art)
+                        art['votes'] = 0
+                        console.log(art)
+                        return art.save()
+                    } else {
+                        console.log(found)
+                    }
+                }).catch((err) => {
+                    console.log(err)
                 })
-                art['keywords'] = getPhrases(art)
-                console.log(art)
+
             })
-            // save articles
 
         } else {
             console.log(err)
@@ -80,8 +93,13 @@ function updateNews() {
 
 router.get('/purge', (req, res) => {
     // update db from NewsAPI.org
-    updateNews()
-    res.send('purged')
+    //updateNews()
+    // not purging on main build
+})
+
+router.get('/dall', (req, res) => {
+    //dropArticles()
+    // no
 })
 
 module.exports = router
