@@ -16,14 +16,13 @@ router.use(bodyParser.urlencoded({
     extended: true
 }))
 
-router.get('/', (req, res) => {
-    Article.find().lean().then((articleList) => {
-        res.send(articleList)
-    }).catch((err) => {
-        console.log(err)
-        res.status(500).end()
-    })
-})
+// 3 600 000 is 1 hour
+const REFRESH = 300000
+
+setInterval(() => {
+   updateNews()
+   console.log('ran') 
+}, REFRESH)
 
 function getWords(article) {
     let words = []
@@ -91,14 +90,33 @@ function updateNews() {
     })
 }
 
+router.get('/', (req, res) => {
+    Article.find().lean().then((articleList) => {
+        res.send(articleList)
+    }).catch((err) => {
+        console.log(err)
+        res.status(500).end()
+    })
+})
+
+router.post('/vote', (req, res) => {
+    console.log(`votes modified by ${req.body.vote} for ${req.body.id}`)
+    console.log(req.body)
+    Article.findById(req.body.id).then((found) => {
+        if (found.length) {
+            found.votes = req.body.votes
+            found.save()
+        }
+    })
+})
+
 router.get('/purge', (req, res) => {
     // update db from NewsAPI.org
-    //updateNews()
     // not purging on main build
 })
 
 router.get('/dall', (req, res) => {
-    //dropArticles()
+    // dropArticles()
     // no
 })
 
