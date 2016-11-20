@@ -4,7 +4,6 @@ const dotenv = require('dotenv').config()
 const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
-const Promise = require('promise')
 const headlineRoute = require('./routes/headline.js')
 const keywordRoute = require('./routes/keyword.js')
 

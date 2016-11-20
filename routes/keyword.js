@@ -13,7 +13,7 @@ router.use(bodyParser.urlencoded({
 }))
 
 router.get('/', (req, res) => {
-    Meme.find().lean().then((keywordList) => {
+    Keyword.find().lean().then((keywordList) => {
         console.log(keywordList)
         res.send(keywordList)
     }).catch((err) => {
