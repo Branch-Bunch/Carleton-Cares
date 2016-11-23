@@ -29,7 +29,7 @@ router.get('/index', (req, res) => {
         res.send(wordList)
     }).catch((err) => {
         console.log(err)
-        res.satus(500).end
+        res.status(500).end
     })
 })
 
