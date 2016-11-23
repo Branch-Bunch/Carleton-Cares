@@ -1,5 +1,5 @@
 {
-  "name": "Wall-Of-Memes",
+  "name": "CU-News",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -12,12 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MemeMasters/Wall-Of-Memes"
+    "url": "https://github.com/CU-News/CU-News"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "homepage": "https://github.com/MemeMasters/Wall-Of-Memes#readme",
+  "homepage": "https://github.com/CU-News/CU-News#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
     "dotenv": "^2.0.0",
