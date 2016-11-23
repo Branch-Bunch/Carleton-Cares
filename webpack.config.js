@@ -3,8 +3,9 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: './public/js/index.js',
-    output: { path: __dirname, filename: './public/js/bundle.js'},
-    watch: true,
+    output: {
+        path: __dirname, filename: './public/js/bundle.js'
+    },
     module: {
         loaders: [
             {

@@ -6,9 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "postinstall": "webpack",
-    "babel": "babel",
-    "webpack": "webpack"
+    "build": "webpack --watch --progress --colors",
+    "postinstall": "webpack p"
   },
   "repository": {
     "type": "git",

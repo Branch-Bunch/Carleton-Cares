@@ -44,7 +44,7 @@ router.get('/:word', (req, res) => {
         res.send(wordList[0].votes)
     }).catch((err) => {
         console.log(err)
-        res.satus(500).end
+        res.status(500).end
     })
 })
 
