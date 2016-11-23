@@ -94,12 +94,18 @@ function updateNews() {
     })
 }
 
+function getAmount(vote) {
+    let amount = parseInt(vote, 10)
+    return Math.abs(amount) / amount || 0
+}
+
 router.post('/vote', (req, res) => {
     console.log(`votes modified by ${req.body.vote} for ${req.body.id}`)
     console.log(req.body)
-    let amount = parseInt(req.body.vote, 10)
+    let amount = getAmount(req.body.vote)
+    console.log(amount)
     Article.findById(req.body.id).then((found) => {
-        if (!found.length) {
+        if (!found.length && amount !== 0) {
             found.votes += amount
             return found.save()
         }
