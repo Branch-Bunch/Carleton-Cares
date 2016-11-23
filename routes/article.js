@@ -94,15 +94,6 @@ function updateNews() {
     })
 }
 
-router.get('/', (req, res) => {
-    Article.find().lean().then((articleList) => {
-        res.send(articleList)
-    }).catch((err) => {
-        console.log(err)
-        res.status(500).end()
-    })
-})
-
 router.post('/vote', (req, res) => {
     console.log(`votes modified by ${req.body.vote} for ${req.body.id}`)
     console.log(req.body)
@@ -151,17 +142,6 @@ router.post('/vote', (req, res) => {
         }
     })
     res.status(200).end()
-})
-
-router.get('/purge', (req, res) => {
-    // update db from NewsAPI.org
-    // not purging on main build
-    updateNews()
-})
-
-router.get('/dall', (req, res) => {
-
-    // no
 })
 
 module.exports = router

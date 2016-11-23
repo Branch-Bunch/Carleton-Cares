@@ -22,17 +22,6 @@ router.get('/', (req, res) => {
     })
 })
 
-router.get('/index', (req, res) => {
-    let word = req.query.word
-    Keyword.find({word: word}).lean().then((wordList) => {
-        console.log(wordList)
-        res.send(wordList)
-    }).catch((err) => {
-        console.log(err)
-        res.status(500).end
-    })
-})
-
 router.get('/:word', (req, res) => {
     console.log(req.params)
     let word = req.params.word
@@ -44,7 +33,7 @@ router.get('/:word', (req, res) => {
         res.send(wordList[0].votes)
     }).catch((err) => {
         console.log(err)
-        res.status(500).end
+        res.status(500).end()
     })
 })
 
