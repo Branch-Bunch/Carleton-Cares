@@ -95,8 +95,7 @@ function updateNews() {
 }
 
 function getAmount(vote) {
-    let amount = parseInt(vote, 10)
-    return Math.abs(amount) / amount || 0
+    return Math.abs(vote) / vote || 0
 }
 
 router.post('/vote', (req, res) => {
@@ -137,7 +136,7 @@ router.post('/vote', (req, res) => {
                                 let len = slot.votes.length
                                 let newVote = {sum: slot.votes[len - 1] + amount, time: Date.now()}
                                 slot.votes.push(newVote)
-                                return found.save()
+                                found.save()
                             }
                         })
                     }
