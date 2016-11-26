@@ -107,7 +107,7 @@ router.post('/vote', (req, res) => {
         return false
     }
     Article.findById(req.body.id).then((found) => {
-        if (!found.length) {
+        if (found) {
             found.votes += amount
             return found.save()
         }
@@ -147,8 +147,11 @@ router.post('/vote', (req, res) => {
                 })
 
             })
+        } else {
+            console.log('Nothing found for that id')
         }
     })
+
     res.status(200).end()
 })
 
