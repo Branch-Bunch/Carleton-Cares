@@ -43,7 +43,7 @@ function getPhrases(article) {
     let words = []
     retext().use(retextkeywords).process(
         `${article.title} ${article.description}`, (err, file) => {
-            file.data.keyphrases.forEach(function (phrase) {
+            file.data.keyphrases.forEach((phrase) => {
                 words.push(sanitize(phrase.matches[0].nodes.map(nlcstToString).join('')))
             })
     })
