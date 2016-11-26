@@ -120,28 +120,22 @@ router.post('/vote', (req, res) => {
                 word = word.toLowerCase()
                 console.log(word)
                 Keyword.find({word: word}).then((found) => {
-
-                    if (!found.length) {
-                        //console.log(found)
+                    if (!found) {
+                        console.log('not found')
                         let keyw = new Keyword()
                         let novote = {sum: 0, time: Date.now()}
                         keyw['votes'] = []
                         keyw['votes'].push(novote)
                         keyw['word'] = word
-                        console.log(word)
+                        console.log(`word is ${word}`)
                         return keyw.save()
                     } else {
-                        //just update it
-                        console.log(`found========= ${found}`)
-                        Object.keys(found).forEach((slot) => {
-                            if (slot.word == word) {
-                                console.log(`SLOT ====== ${slot}`)
-                                let len = slot.votes.length
-                                let newVote = {sum: slot.votes[len - 1] + amount, time: Date.now()}
-                                slot.votes.push(newVote)
-                                found.save()
-                            }
-                        })
+                        console.log(`found[0].votes: ${found[0].votes}`)
+                        let votes = found[0].votes
+                        let len = votes.length
+                        let newVote = {sum: votes[len - 1].sum + amount, time: Date.now()}
+                        votes.push(newVote)
+                        return found[0].save()
                     }
 
                 })
