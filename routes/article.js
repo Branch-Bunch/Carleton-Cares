@@ -103,8 +103,11 @@ router.post('/vote', (req, res) => {
     console.log(req.body)
     let amount = getAmount(req.body.vote)
     console.log(amount)
+    if (amount === 0) {
+        return false
+    }
     Article.findById(req.body.id).then((found) => {
-        if (!found.length && amount !== 0) {
+        if (!found.length) {
             found.votes += amount
             return found.save()
         }
