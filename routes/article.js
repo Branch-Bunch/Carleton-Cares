@@ -52,8 +52,9 @@ function getPhrases(article) {
 }
 
 function sanitize(string) {
+    // formats the string to lowercase, and removes all punctuation
     string = string.toLowerCase()
-    return string.replace(/[^0-9a-zA-Z ,.]/g, '')
+    return string.replace(/[^0-9a-z ]/g, '')
 }
 
 function dropArticles() {
@@ -112,9 +113,8 @@ router.post('/vote', (req, res) => {
     let article = null
     Article.findById(req.body.id).then((art) => {
         art.votes += amount
-        art.save()
         article = art
-        return article
+        return art.save()
     }).then((data) => {
         data.keywords.forEach((word) => {
             // save keywords, add to their points
@@ -126,7 +126,7 @@ router.post('/vote', (req, res) => {
                     let len = votes.length
                     let newVote = {sum: votes[len - 1].sum + amount, time: Date.now()}
                     votes.push(newVote)
-                    return keyword.save()
+                    keyword.save()
                 })
                 .catch((error) => {
                     console.log(`not found ${word}`)
@@ -134,7 +134,7 @@ router.post('/vote', (req, res) => {
                     let firstVote = {sum: amount, time: Date.now()}
                     keyw['votes'] = [firstVote]
                     keyw['word'] = word
-                    return keyw.save()
+                    keyw.save()
                 })
         })
         console.log(`article: ${article}`)
