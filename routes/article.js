@@ -127,7 +127,8 @@ router.post('/vote', (req, res) => {
                     let newVote = {sum: votes[len - 1].sum + amount, time: Date.now()}
                     votes.push(newVote)
                     return keyword.save()
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     console.log(`not found ${word}`)
                     let keyw = new Keyword()
                     let firstVote = {sum: amount, time: Date.now()}
@@ -140,7 +141,8 @@ router.post('/vote', (req, res) => {
         res.status(200).send(article)
         return
 
-    }).catch((error) => {
+    })
+    .catch((error) => {
         res.status(500).send({
             error: error,
             reqBody: req.body
