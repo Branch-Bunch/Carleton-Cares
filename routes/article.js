@@ -119,21 +119,28 @@ router.post('/vote', (req, res) => {
         data.keywords.forEach((word) => {
             // save keywords, add to their points
             console.log(`modifying ${word}`)
-            Keyword.findOne({word: word})
+            Keyword.findOne({word})
                 .then((keyword) => {
                     console.log(`keyword.votes: ${keyword.votes}`)
                     let votes = keyword.votes
                     let len = votes.length
-                    let newVote = {sum: votes[len - 1].sum + amount, time: Date.now()}
+                    let newVote = {
+                        sum: votes[len - 1].sum + amount,
+                        time: Date.now()
+                    }
                     votes.push(newVote)
                     keyword.save()
                 })
                 .catch((error) => {
                     console.log(`not found ${word}`)
-                    let keyw = new Keyword()
-                    let firstVote = {sum: amount, time: Date.now()}
-                    keyw['votes'] = [firstVote]
-                    keyw['word'] = word
+                    let keyw = new Keyword({
+                        word,
+                        votes: [{
+                            sum: amount,
+                            time: Date.now()
+                        }]
+
+                    })
                     keyw.save()
                 })
         })
