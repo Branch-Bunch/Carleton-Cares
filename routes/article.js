@@ -21,8 +21,8 @@ router.use(bodyParser.urlencoded({
 const REFRESH = 300000
 
 setInterval(() => {
-   updateNews()
-   console.log('ran') 
+    updateNews()
+    console.log('ran') 
 }, REFRESH)
 
 function getWords(article) {
@@ -34,7 +34,7 @@ function getWords(article) {
                 let word = sanitize(nlcstToString(keyword.matches[0].node))
                 words.push(nlcstToString(keyword.matches[0].node))
             })
-    })
+        })
     //console.log(article)
     return words
 }
@@ -46,14 +46,14 @@ function getPhrases(article) {
             file.data.keyphrases.forEach((phrase) => {
                 words.push(sanitize(phrase.matches[0].nodes.map(nlcstToString).join('')))
             })
-    })
+        })
     //console.log(article)
     return words
 }
 
 function sanitize(string) {
     string = string.toLowerCase()
-    return string.replace(/[^0-9a-zA-Z ,.]/g, '');
+    return string.replace(/[^0-9a-zA-Z ,.]/g, '')
 }
 
 function dropArticles() {
@@ -99,54 +99,54 @@ function getAmount(vote) {
 }
 
 router.post('/vote', (req, res) => {
-    console.log(`votes modified by ${req.body.vote} for ${req.body.id}`)
-    console.log(req.body)
     let amount = getAmount(req.body.vote)
-    console.log(amount)
+    console.log(`votes modified by ${amount} for ${req.body.id}`)
     if (amount === 0) {
-        return false
+        res.status(500).send({
+            error: "Invalid value for vote",
+            reqBody: req.body
+        })
+        return
     }
-    Article.findById(req.body.id).then((found) => {
-        if (found) {
-            found.votes += amount
-            return found.save()
-        }
-        return false
+
+    let article = null
+    Article.findById(req.body.id).then((art) => {
+        art.votes += amount
+        art.save()
+        article = art
+        return article
     }).then((data) => {
-        if (data) {
-            console.log(data.keywords)
-            data.keywords.forEach((word) =>{
-                // save keywords, add to their points
-                word = word.toLowerCase()
-                console.log(word)
-                Keyword.find({word: word}).then((found) => {
-                    if (!found) {
-                        console.log('not found')
-                        let keyw = new Keyword()
-                        let novote = {sum: 0, time: Date.now()}
-                        keyw['votes'] = []
-                        keyw['votes'].push(novote)
-                        keyw['word'] = word
-                        console.log(`word is ${word}`)
-                        return keyw.save()
-                    } else {
-                        console.log(`found[0].votes: ${found[0].votes}`)
-                        let votes = found[0].votes
-                        let len = votes.length
-                        let newVote = {sum: votes[len - 1].sum + amount, time: Date.now()}
-                        votes.push(newVote)
-                        return found[0].save()
-                    }
-
+        data.keywords.forEach((word) => {
+            // save keywords, add to their points
+            console.log(`modifying ${word}`)
+            Keyword.findOne({word: word})
+                .then((keyword) => {
+                    console.log(`keyword.votes: ${keyword.votes}`)
+                    let votes = keyword.votes
+                    let len = votes.length
+                    let newVote = {sum: votes[len - 1].sum + amount, time: Date.now()}
+                    votes.push(newVote)
+                    return keyword.save()
+                }).catch((error) => {
+                    console.log(`not found ${word}`)
+                    let keyw = new Keyword()
+                    let firstVote = {sum: amount, time: Date.now()}
+                    keyw['votes'] = [firstVote]
+                    keyw['word'] = word
+                    return keyw.save()
                 })
+        })
+        console.log(`article: ${article}`)
+        res.status(200).send(article)
+        return
 
-            })
-        } else {
-            console.log('Nothing found for that id')
-        }
+    }).catch((error) => {
+        res.status(500).send({
+            error: error,
+            reqBody: req.body
+        })
+        return
     })
-
-    res.status(200).end()
 })
 
 module.exports = router
