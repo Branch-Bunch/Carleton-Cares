@@ -70,22 +70,22 @@ function updateNews() {
             const headlines = JSON.parse(body).articles
             let articles = headlines.map((old) => {
                 // save art
-                Article.find({url: old.url}).then((found) => {
-                    if (!found.length) {
-                        let art = new Article()
-                        Object.keys(old).forEach((key) => {
-                            art[key] = old[key]
-                        })
-                        art['keywords'] = getPhrases(art)
-                        art['votes'] = 0
-                        console.log(art)
-                        return art.save()
-                    } else {
-                        console.log(found)
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                })
+                Article.find({url: old.url})
+                    .then((found) => {
+                        if (!found.length) {
+                            let art = new Article()
+                            Object.keys(old).forEach((key) => {
+                                art[key] = old[key]
+                            })
+                            art['keywords'] = getPhrases(art)
+                            art['votes'] = 0
+                            console.log(art)
+                            return art.save()
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
 
             })
 
@@ -111,62 +111,65 @@ router.post('/vote', (req, res) => {
     }
 
     let article = null
-    Article.findById(req.body.id).then((art) => {
-        art.votes += amount
-        article = art
-        return art.save()
-    }).then((data) => {
-        data.keywords.forEach((word) => {
-            // save keywords, add to their points
-            console.log(`modifying ${word}`)
-            Keyword.findOne({word})
-                .then((keyword) => {
-                    console.log(`keyword.votes: ${keyword.votes}`)
-                    let votes = keyword.votes
-                    let len = votes.length
-                    let newVote = {
-                        sum: votes[len - 1].sum + amount,
-                        time: Date.now()
-                    }
-                    votes.push(newVote)
-                    keyword.save()
-                })
-                .catch((error) => {
-                    console.log(`not found ${word}`)
-                    let keyw = new Keyword({
-                        word,
-                        votes: [{
-                            sum: amount,
+    Article.findById(req.body.id)
+        .then((art) => {
+            art.votes += amount
+            article = art
+            return art.save()
+        })
+        .then((data) => {
+            data.keywords.forEach((word) => {
+                // save keywords, add to their points
+                console.log(`modifying ${word}`)
+                Keyword.findOne({word})
+                    .then((keyword) => {
+                        console.log(`keyword.votes: ${keyword.votes}`)
+                        let votes = keyword.votes
+                        let len = votes.length
+                        let newVote = {
+                            sum: votes[len - 1].sum + amount,
                             time: Date.now()
-                        }]
-
+                        }
+                        votes.push(newVote)
+                        keyword.save()
                     })
-                    keyw.save()
-                })
-        })
-        console.log(`article: ${article}`)
-        res.status(200).send(article)
-        return
+                    .catch((error) => {
+                        console.log(`not found ${word}`)
+                        let keyw = new Keyword({
+                            word,
+                            votes: [{
+                                sum: amount,
+                                time: Date.now()
+                            }]
+                        })
+                        keyw.save()
+                    })
+            })
+            console.log(`article: ${article}`)
+            res.status(200).send(article)
+            return
 
-    })
-    .catch((error) => {
-        res.status(500).send({
-            error,
-            reqBody: req.body
         })
-        return
-    })
+        .catch((error) => {
+            res.status(500).send({
+                error,
+                reqBody: req.body
+            })
+            return
+        })
 })
 
 router.get('/:id', (req, res) => {
-    Article.findById(req.params.id).then((art) => {
-       res.status(200).send(art) 
-    }).catch((error) => {
-        res.status(500).send({
-            error,
-            reqParams: req.params
+    Article.findById(req.params.id)
+        .then((art) => {
+           res.status(200).send(art) 
         })
-    })
+        .catch((error) => {
+            res.status(500).send({
+                error,
+                reqParams: req.params
+            })
+        })
 })
 
 module.exports = router
