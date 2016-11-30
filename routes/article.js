@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const Article = require('../models/ArticleModel.js')
 const Keyword = require('../models/KeywordModel.js')
-const request = require('request')
+const request = require('request-promise')
 const retext = require('retext')
 const retextkeywords = require('retext-keywords')
 const nlcstToString = require('nlcst-to-string')
@@ -65,9 +65,9 @@ function dropArticles() {
 function updateNews() {
     // hourly
     const url = `${process.env.NEWS_URI}`
-    request(url, (err, res, body) => {
-        if (!err && res.statusCode == 200) {
-            const headlines = JSON.parse(body).articles
+    request(url)
+        .then((res) => {
+            const headlines = JSON.parse(res).articles
             let articles = headlines.map((old) => {
                 // save art
                 Article.findOne({url: old.url})
@@ -83,13 +83,13 @@ function updateNews() {
                         }, old)
                         let art = new Article(artObj)
                         console.log(art)
-                        return art.save()
+                        art.save()
                     })
             })
-        } else {
-            console.log(err)
-        }
-    })
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 function getAmount(vote) {
@@ -159,7 +159,7 @@ router.post('/vote', (req, res) => {
 router.get('/:id', (req, res) => {
     Article.findById(req.params.id)
         .then((art) => {
-           res.status(200).send(art) 
+            res.status(200).send(art) 
         })
         .catch((error) => {
             res.status(500).send({
