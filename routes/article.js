@@ -151,10 +151,21 @@ router.post('/vote', (req, res) => {
     })
     .catch((error) => {
         res.status(500).send({
-            error: error,
+            error,
             reqBody: req.body
         })
         return
+    })
+})
+
+router.get('/:id', (req, res) => {
+    Article.findById(req.params.id).then((art) => {
+       res.status(200).send(art) 
+    }).catch((error) => {
+        res.status(500).send({
+            error,
+            reqParams: req.params
+        })
     })
 })
 
