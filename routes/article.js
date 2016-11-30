@@ -70,25 +70,22 @@ function updateNews() {
             const headlines = JSON.parse(body).articles
             let articles = headlines.map((old) => {
                 // save art
-                Article.find({url: old.url})
-                    .then((found) => {
-                        if (!found.length) {
-                            let art = new Article()
-                            Object.keys(old).forEach((key) => {
-                                art[key] = old[key]
-                            })
-                            art['keywords'] = getPhrases(art)
-                            art['votes'] = 0
-                            console.log(art)
-                            return art.save()
-                        }
+                Article.findOne({url: old.url})
+                    .then((article) => {
+                        // already in database, do nothing
+                        if (!article) throw new Error('Article not found')
                     })
                     .catch((err) => {
-                        console.log(err)
+                        // not in db
+                        let artObj = Object.assign({
+                            keywords: getPhrases(old),
+                            votes: 0
+                        }, old)
+                        let art = new Article(artObj)
+                        console.log(art)
+                        return art.save()
                     })
-
             })
-
         } else {
             console.log(err)
         }
