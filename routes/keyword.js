@@ -12,16 +12,6 @@ router.use(bodyParser.urlencoded({
     extended: true
 }))
 
-router.get('/', (req, res) => {
-    Keyword.find().lean().then((keywordList) => {
-        console.log(keywordList)
-        res.send(keywordList)
-    }).catch((err) => {
-        console.log(err)
-        res.status(500).end()
-    })
-})
-
 router.get('/:word', (req, res) => {
     console.log(req.params)
     let word = req.params.word

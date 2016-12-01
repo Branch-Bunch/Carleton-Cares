@@ -28,6 +28,7 @@
     "react-dom": "^15.4.0",
     "react-google-charts": "^1.2.1",
     "request": "^2.79.0",
+    "request-promise": "^4.1.1",
     "retext": "^4.0.0",
     "retext-keywords": "^3.0.0"
   },
