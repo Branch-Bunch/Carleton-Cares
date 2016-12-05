@@ -1,5 +1,5 @@
 import React from 'react'
-import Article from './article.js'
+import Article from './Article.js'
 import {Grid, Row, Col} from 'react-bootstrap'
 
 export default class ArticleTable extends React.Component {
@@ -9,6 +9,7 @@ export default class ArticleTable extends React.Component {
         this.state = {
             articles: []
         }
+        this.refreshState.bind(this)
     }
 
     refreshState() {
@@ -17,15 +18,7 @@ export default class ArticleTable extends React.Component {
                 return res.json()
             })
             .then(articles => {
-                articles = articles.sort((a, b) => {
-                    if (a.votes < b.votes) {
-                        return 1
-                    } else if (a.votes > b.votes) {
-                        return -1
-                    } else {
-                        return 0
-                    }
-                })
+                articles = articles.sort((a, b) => a - b)
                 console.log('refresh')
                 this.setState({
                     articles
@@ -37,26 +30,30 @@ export default class ArticleTable extends React.Component {
     }
 
     componentDidMount() {
-        this.refreshState()
+        refreshState()
     }
 
     render() {
         const articles = this.state.articles.map((article, index) => {
             return (
                 <Article
-                    key={index}
+                    {...article} 
+                    key={article.id}
                     id={article._id}
-                    index={index}
+                    index={index + 1}
+                    handleVote={this.refreshState}
+                    /*
                     author={article.author}
                     title={article.title}
                     url={article.url}
                     votes={article.votes}
                     publishedAt={article.publishedAt}
-                    handleVote={this.refreshState.bind(this)}
+                    */
                 />
             )
         })
 
+        //TODO: Try bootstrap componets without {}'s
         return (
             <Grid>
                 <Row>

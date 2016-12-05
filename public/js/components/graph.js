@@ -1,5 +1,4 @@
 import React from 'react'
-import ArticleTable from './articleTable.js'
 import {render} from 'react-dom'
 import {Chart} from 'react-google-charts'
 
@@ -18,24 +17,15 @@ export default class Graph extends React.Component {
                 return res.json()
             })
             .then(dataPoints => {
-                console.log(dataPoints)
-                dataPoints = dataPoints.sort((a, b) => {
-                    if (a.time > b.time) {
-                        return 1
-                    } else if (a.time < b.time) {
-                        return -1
-                    } else {
-                        return 0
-                    }
-                }).map(point => [point.time, point.sum])
+                dataPoints = dataPoints
+                    .sort((a, b) => a - b)
+                    .map(point => [point.time, point.sum])
                 console.log(dataPoints)
                 this.setState({
-                    dataPoints: dataPoints
+                    dataPoints
                 })
             })
-            .catch(err => {
-                console.log('Error fetching articles', err)
-            })
+            .catch(err => console.log('Error fetching articles', err))
     }
 
   render() {
