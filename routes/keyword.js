@@ -7,11 +7,6 @@ const Keyword = require('../models/KeywordModel.js')
 
 const router = express.Router()
 
-router.use(bodyParser.json())
-router.use(bodyParser.urlencoded({
-    extended: true
-}))
-
 router.get('/:word', (req, res) => {
     console.log(req.params)
     let word = req.params.word

@@ -12,11 +12,6 @@ const nlcstToString = require('nlcst-to-string')
 
 const router = express.Router()
 
-router.use(bodyParser.json())
-router.use(bodyParser.urlencoded({
-    extended: true
-}))
-
 // 3 600 000 is 1 hour
 const REFRESH = 300000
 
