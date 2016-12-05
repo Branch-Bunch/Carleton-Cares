@@ -6,6 +6,9 @@ module.exports = {
     output: {
         path: __dirname, filename: './public/js/bundle.js'
     },
+    devServer: {
+        contentBase: './public/'
+    },
     module: {
         loaders: [
             {
