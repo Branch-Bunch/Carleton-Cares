@@ -12,6 +12,7 @@ export default class Graph extends React.Component {
     }
 
     componentDidMount() {
+        /*
         fetch(`keywords/trump`)
             .then(res => {
                 return res.json()
@@ -26,6 +27,7 @@ export default class Graph extends React.Component {
                 })
             })
             .catch(err => console.log('Error fetching articles', err))
+            */
     }
 
   render() {

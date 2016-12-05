@@ -35,20 +35,13 @@ export default class ArticleTable extends React.Component {
 
     render() {
         const articles = this.state.articles.map((article, index) => {
+            console.log(article)
             return (
                 <Article
                     {...article} 
-                    key={article.id}
-                    id={article._id}
+                    key={article._id}
                     index={index + 1}
                     handleVote={this.refreshState}
-                    /*
-                    author={article.author}
-                    title={article.title}
-                    url={article.url}
-                    votes={article.votes}
-                    publishedAt={article.publishedAt}
-                    */
                 />
             )
         })
