@@ -30,7 +30,7 @@ export default class ArticleTable extends React.Component {
     }
 
     componentDidMount() {
-        refreshState()
+        this.refreshState()
     }
 
     render() {
