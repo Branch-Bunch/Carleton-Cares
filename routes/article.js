@@ -13,7 +13,7 @@ const nlcstToString = require('nlcst-to-string')
 const router = express.Router()
 
 // 3 600 000 is 1 hour
-const REFRESH = 300000
+const REFRESH = 10000
 
 setInterval(() => {
     updateNews()
@@ -136,7 +136,7 @@ router.post('/vote', (req, res) => {
                     })
             })
             console.log(`article: ${article}`)
-            res.status(200).send(article)
+            res.send(article)
             return
 
         })
@@ -149,10 +149,25 @@ router.post('/vote', (req, res) => {
         })
 })
 
+router.get('/', (req, res) => {
+    Article
+        .find()
+        .lean()
+        .then((art) => {
+            res.send(art) 
+        })
+        .catch((error) => {
+            res.status(500).send({
+                error,
+                reqParams: req.params
+            })
+        })
+})
+
 router.get('/:id', (req, res) => {
     Article.findById(req.params.id)
         .then((art) => {
-            res.status(200).send(art) 
+            res.send(art) 
         })
         .catch((error) => {
             res.status(500).send({
