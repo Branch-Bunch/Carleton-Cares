@@ -21584,7 +21584,7 @@
 	                publishedAt: new Date().toISOString()
 	            }]
 	        };
-	        _this.refreshState.bind(_this);
+	        _this.refreshState = _this.refreshState.bind(_this);
 	        return _this;
 	    }
 
@@ -21620,7 +21620,6 @@
 	            var _this3 = this;
 
 	            var articles = this.state.articles.map(function (article, index) {
-	                console.log(article);
 	                return _react2.default.createElement(_Article2.default, _extends({}, article, {
 	                    key: article._id,
 	                    index: index + 1,
@@ -21807,7 +21806,6 @@
 	        _this.state = {
 	            clicked: false
 	        };
-	        _this.notReady.bind(_this);
 	        return _this;
 	    }
 
@@ -21818,6 +21816,7 @@
 
 	            // TODO: Check if this return needs a semi colon
 	            if (!this.canVote()) return null;
+	            console.log(this.props);
 	            fetch('articles/vote', {
 	                method: 'POST',
 	                headers: {
@@ -21828,10 +21827,18 @@
 	                    id: this.props._id
 	                })
 	            }).then(function (res) {
-	                return _this2.props.handleVote();
+	                return res.json();
+	            }).then(function (data) {
+	                console.log(data);
+	                _this2.props.handleVote();
 	            }).catch(function (err) {
 	                return console.log('Vote failed to respond');
 	            });
+	        }
+	    }, {
+	        key: 'handleVote',
+	        value: function handleVote() {
+	            this.props.handleVote();
 	        }
 	    }, {
 	        key: 'canVote',
@@ -21848,9 +21855,10 @@
 	    }, {
 	        key: 'toggleButton',
 	        value: function toggleButton() {
-	            var clicked = !this.state.clicked;
-	            this.setState({
-	                clicked: clicked
+	            this.setState(function (prevState) {
+	                return {
+	                    clicked: !prevState.clicked
+	                };
 	            });
 	        }
 

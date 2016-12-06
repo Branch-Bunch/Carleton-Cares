@@ -8,12 +8,12 @@ export default class ArticleAction extends React.Component {
         this.state = {
             clicked: false
         }
-        this.notReady.bind(this)
     }
 
     callVote(vote) {
         // TODO: Check if this return needs a semi colon
         if (!this.canVote()) return null
+        console.log(this.props)
         fetch('articles/vote', {
             method: 'POST',
             headers: {
@@ -24,8 +24,17 @@ export default class ArticleAction extends React.Component {
                 id: this.props._id
             })
         })
-        .then(res => this.props.handleVote())
+        .then(res => {
+            return res.json()
+        })
+        .then(data => {
+            console.log(data)
+            this.props.handleVote()})
         .catch(err => console.log('Vote failed to respond'))
+    }
+
+    handleVote() {
+        this.props.handleVote()
     }
 
     canVote() {
@@ -36,10 +45,9 @@ export default class ArticleAction extends React.Component {
     }
 
     toggleButton() {
-        const clicked = !this.state.clicked
-        this.setState({
-            clicked
-        })
+        this.setState(prevState => ({
+            clicked: !prevState.clicked
+        }))
     }
 
     // Temp function

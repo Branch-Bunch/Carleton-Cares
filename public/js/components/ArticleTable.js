@@ -26,7 +26,7 @@ export default class ArticleTable extends React.Component {
     }
             ]
         }
-        this.refreshState.bind(this)
+        this.refreshState = this.refreshState.bind(this)
     }
 
     refreshState() {
@@ -54,7 +54,6 @@ export default class ArticleTable extends React.Component {
 
     render() {
         const articles = this.state.articles.map((article, index) => {
-            console.log(article)
             return (
                 <Article
                     {...article} 
