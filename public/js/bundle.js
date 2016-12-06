@@ -21568,7 +21568,21 @@
 	        var _this = _possibleConstructorReturn(this, (ArticleTable.__proto__ || Object.getPrototypeOf(ArticleTable)).call(this, props));
 
 	        _this.state = {
-	            articles: []
+	            articles: [{
+	                _id: '287q4iwgfoirg982',
+	                author: 'Trump',
+	                title: 'Fuck her right in the pussy',
+	                url: 'www.google.com',
+	                votes: 69,
+	                publishedAt: new Date().toISOString()
+	            }, {
+	                _id: '19382gwf9we',
+	                author: 'Trump',
+	                title: 'Fuck her right in the pussy',
+	                url: 'www.google.com',
+	                votes: 69,
+	                publishedAt: new Date().toISOString()
+	            }]
 	        };
 	        _this.refreshState.bind(_this);
 	        return _this;
@@ -21579,6 +21593,7 @@
 	        value: function refreshState() {
 	            var _this2 = this;
 
+	            console.log(this);
 	            fetch('articles').then(function (res) {
 	                return res.json();
 	            }).then(function (articles) {
@@ -21586,6 +21601,7 @@
 	                    return a - b;
 	                });
 	                console.log('refresh');
+	                console.log(_this2);
 	                _this2.setState({
 	                    articles: articles
 	                });
@@ -21719,7 +21735,7 @@
 	                        { md: 5 },
 	                        _react2.default.createElement(_ArticleActions2.default, {
 	                            handleVote: this.props.handleVote,
-	                            id: this.props.id
+	                            id: this.props._id
 	                        })
 	                    )
 	                ),
@@ -21802,7 +21818,6 @@
 
 	            // TODO: Check if this return needs a semi colon
 	            if (!this.canVote()) return null;
-	            console.log(this.props);
 	            fetch('articles/vote', {
 	                method: 'POST',
 	                headers: {

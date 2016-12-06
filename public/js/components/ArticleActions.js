@@ -14,7 +14,6 @@ export default class ArticleAction extends React.Component {
     callVote(vote) {
         // TODO: Check if this return needs a semi colon
         if (!this.canVote()) return null
-        console.log(this.props)
         fetch('articles/vote', {
             method: 'POST',
             headers: {
