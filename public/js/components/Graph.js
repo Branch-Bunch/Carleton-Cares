@@ -11,11 +11,12 @@ export default class Graph extends React.Component {
     }
 
     componentDidMount() {
+        // TODO: Use actuial data
         fetch(`keywords/trump`)
             .then(res => res.json())
             .then((dataPoints) => {
                 dataPoints = dataPoints
-                    .sort((a, b) => a - b)
+                    .sort((a, b) => a.times - b.times)
                     .map(point => [point.time, point.sum])
                 console.log(dataPoints)
                 this.setState({

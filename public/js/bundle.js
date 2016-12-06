@@ -40765,11 +40765,12 @@
 	        value: function componentDidMount() {
 	            var _this2 = this;
 
+	            // TODO: Use actuial data
 	            fetch('keywords/trump').then(function (res) {
 	                return res.json();
 	            }).then(function (dataPoints) {
 	                dataPoints = dataPoints.sort(function (a, b) {
-	                    return a - b;
+	                    return a.times - b.times;
 	                }).map(function (point) {
 	                    return [point.time, point.sum];
 	                });
