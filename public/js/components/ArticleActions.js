@@ -13,7 +13,6 @@ export default class ArticleAction extends React.Component {
     callVote(vote) {
         // TODO: Check if this return needs a semi colon
         if (!this.canVote()) return null
-        console.log(this.props)
         fetch('articles/vote', {
             method: 'POST',
             headers: {
@@ -21,20 +20,11 @@ export default class ArticleAction extends React.Component {
             },
             body: JSON.stringify({
                 vote,
-                id: this.props._id
+                id: this.props.id
             })
         })
-        .then(res => {
-            return res.json()
-        })
-        .then(data => {
-            console.log(data)
-            this.props.handleVote()})
+        .then(res => this.props.handleVote())
         .catch(err => console.log('Vote failed to respond'))
-    }
-
-    handleVote() {
-        this.props.handleVote()
     }
 
     canVote() {
@@ -45,7 +35,7 @@ export default class ArticleAction extends React.Component {
     }
 
     toggleButton() {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             clicked: !prevState.clicked
         }))
     }

@@ -5,19 +5,15 @@ import {Chart} from 'react-google-charts'
 export default class Graph extends React.Component {
     constructor(props) {
         super(props)
-
         this.state = {
             dataPoints: []
         }
     }
 
     componentDidMount() {
-        /*
         fetch(`keywords/trump`)
-            .then(res => {
-                return res.json()
-            })
-            .then(dataPoints => {
+            .then(res => res.json())
+            .then((dataPoints) => {
                 dataPoints = dataPoints
                     .sort((a, b) => a - b)
                     .map(point => [point.time, point.sum])
@@ -27,7 +23,6 @@ export default class Graph extends React.Component {
                 })
             })
             .catch(err => console.log('Error fetching articles', err))
-            */
     }
 
   render() {

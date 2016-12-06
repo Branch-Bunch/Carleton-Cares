@@ -5,47 +5,22 @@ import {Grid, Row, Col} from 'react-bootstrap'
 export default class ArticleTable extends React.Component {
     constructor(props) {
         super(props)
-
         this.state = {
-            articles: [
-                {
-        _id: '287q4iwgfoirg982',
-        author: 'Trump',
-        title: 'Fuck her right in the pussy',
-        url: 'www.google.com',
-        votes: 69,
-        publishedAt: (new Date()).toISOString()
-    },
-    {
-        _id: '19382gwf9we',
-        author: 'Trump',
-        title: 'Fuck her right in the pussy',
-        url: 'www.google.com',
-        votes: 69,
-        publishedAt: (new Date()).toISOString()
-    }
-            ]
+            articles: []
         }
         this.refreshState = this.refreshState.bind(this)
     }
 
     refreshState() {
-        console.log(this)
         fetch(`articles`)
-            .then(res => {
-                return res.json()
-            })
-            .then(articles => {
-                articles = articles.sort((a, b) => a - b)
-                console.log('refresh')
-                console.log(this)
+            .then(res => res.json())
+            .then((articles) => {
+                articles = articles.sort((a, b) => b.votes - a.votes)
                 this.setState({
                     articles
                 })
             })
-            .catch(err => {
-                console.log('Error fetching articles', err)
-            })
+            .catch(err => console.log('Error fetching articles', err))
     }
 
     componentDidMount() {

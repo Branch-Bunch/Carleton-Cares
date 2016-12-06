@@ -90,6 +90,7 @@ function getAmount(vote) {
 }
 
 router.post('/vote', (req, res) => {
+    console.log(req.body)
     let amount = getAmount(req.body.vote)
     console.log(`votes modified by ${amount} for ${req.body.id}`)
     if (amount === 0) {
@@ -154,12 +155,11 @@ router.get('/', (req, res) => {
         .find()
         .lean()
         .then((art) => {
-            console.log(art)
             res.send(art) 
         })
         .catch((error) => {
             res.status(500).send({
-                error,
+                error: `Articles weren't found: ${error}`,
                 reqParams: req.params
             })
         })

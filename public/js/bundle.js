@@ -21568,21 +21568,7 @@
 	        var _this = _possibleConstructorReturn(this, (ArticleTable.__proto__ || Object.getPrototypeOf(ArticleTable)).call(this, props));
 
 	        _this.state = {
-	            articles: [{
-	                _id: '287q4iwgfoirg982',
-	                author: 'Trump',
-	                title: 'Fuck her right in the pussy',
-	                url: 'www.google.com',
-	                votes: 69,
-	                publishedAt: new Date().toISOString()
-	            }, {
-	                _id: '19382gwf9we',
-	                author: 'Trump',
-	                title: 'Fuck her right in the pussy',
-	                url: 'www.google.com',
-	                votes: 69,
-	                publishedAt: new Date().toISOString()
-	            }]
+	            articles: []
 	        };
 	        _this.refreshState = _this.refreshState.bind(_this);
 	        return _this;
@@ -21593,20 +21579,17 @@
 	        value: function refreshState() {
 	            var _this2 = this;
 
-	            console.log(this);
 	            fetch('articles').then(function (res) {
 	                return res.json();
 	            }).then(function (articles) {
 	                articles = articles.sort(function (a, b) {
-	                    return a - b;
+	                    return b.votes - a.votes;
 	                });
-	                console.log('refresh');
-	                console.log(_this2);
 	                _this2.setState({
 	                    articles: articles
 	                });
 	            }).catch(function (err) {
-	                console.log('Error fetching articles', err);
+	                return console.log('Error fetching articles', err);
 	            });
 	        }
 	    }, {
@@ -21816,7 +21799,6 @@
 
 	            // TODO: Check if this return needs a semi colon
 	            if (!this.canVote()) return null;
-	            console.log(this.props);
 	            fetch('articles/vote', {
 	                method: 'POST',
 	                headers: {
@@ -21824,21 +21806,13 @@
 	                },
 	                body: JSON.stringify({
 	                    vote: vote,
-	                    id: this.props._id
+	                    id: this.props.id
 	                })
 	            }).then(function (res) {
-	                return res.json();
-	            }).then(function (data) {
-	                console.log(data);
-	                _this2.props.handleVote();
+	                return _this2.props.handleVote();
 	            }).catch(function (err) {
 	                return console.log('Vote failed to respond');
 	            });
-	        }
-	    }, {
-	        key: 'handleVote',
-	        value: function handleVote() {
-	            this.props.handleVote();
 	        }
 	    }, {
 	        key: 'canVote',
@@ -40789,22 +40763,23 @@
 	    _createClass(Graph, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            /*
-	            fetch(`keywords/trump`)
-	                .then(res => {
-	                    return res.json()
-	                })
-	                .then(dataPoints => {
-	                    dataPoints = dataPoints
-	                        .sort((a, b) => a - b)
-	                        .map(point => [point.time, point.sum])
-	                    console.log(dataPoints)
-	                    this.setState({
-	                        dataPoints
-	                    })
-	                })
-	                .catch(err => console.log('Error fetching articles', err))
-	                */
+	            var _this2 = this;
+
+	            fetch('keywords/trump').then(function (res) {
+	                return res.json();
+	            }).then(function (dataPoints) {
+	                dataPoints = dataPoints.sort(function (a, b) {
+	                    return a - b;
+	                }).map(function (point) {
+	                    return [point.time, point.sum];
+	                });
+	                console.log(dataPoints);
+	                _this2.setState({
+	                    dataPoints: dataPoints
+	                });
+	            }).catch(function (err) {
+	                return console.log('Error fetching articles', err);
+	            });
 	        }
 	    }, {
 	        key: 'render',
