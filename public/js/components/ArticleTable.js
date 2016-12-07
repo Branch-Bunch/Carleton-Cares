@@ -5,28 +5,22 @@ import {Grid, Row, Col} from 'react-bootstrap'
 export default class ArticleTable extends React.Component {
     constructor(props) {
         super(props)
-
         this.state = {
             articles: []
         }
-        this.refreshState.bind(this)
+        this.refreshState = this.refreshState.bind(this)
     }
 
     refreshState() {
         fetch(`articles`)
-            .then(res => {
-                return res.json()
-            })
-            .then(articles => {
-                articles = articles.sort((a, b) => a - b)
-                console.log('refresh')
+            .then(res => res.json())
+            .then((articles) => {
+                articles = articles.sort((a, b) => b.votes - a.votes)
                 this.setState({
                     articles
                 })
             })
-            .catch(err => {
-                console.log('Error fetching articles', err)
-            })
+            .catch(err => console.log('Error fetching articles', err))
     }
 
     componentDidMount() {
@@ -38,17 +32,9 @@ export default class ArticleTable extends React.Component {
             return (
                 <Article
                     {...article} 
-                    key={article.id}
-                    id={article._id}
+                    key={article._id}
                     index={index + 1}
                     handleVote={this.refreshState}
-                    /*
-                    author={article.author}
-                    title={article.title}
-                    url={article.url}
-                    votes={article.votes}
-                    publishedAt={article.publishedAt}
-                    */
                 />
             )
         })
@@ -57,8 +43,12 @@ export default class ArticleTable extends React.Component {
         return (
             <Grid>
                 <Row>
-                    <Col md={1} mdOffset={1}><h3>Number</h3></Col>
-                    <Col md={5}><h3>Article</h3></Col>
+                    <Col md={1} mdOffset={1}>
+                        <h3>Number</h3>
+                     </Col>
+                     <Col md={5}>
+                         <h3>Article</h3>
+                     </Col>
                 </Row>
                 <Row>
                     {articles}

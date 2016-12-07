@@ -5,7 +5,6 @@ import {Chart} from 'react-google-charts'
 export default class Graph extends React.Component {
     constructor(props) {
         super(props)
-
         this.state = {
             dataPoints: []
         }

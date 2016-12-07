@@ -90,6 +90,7 @@ function getAmount(vote) {
 }
 
 router.post('/vote', (req, res) => {
+    console.log(req.body)
     let amount = getAmount(req.body.vote)
     console.log(`votes modified by ${amount} for ${req.body.id}`)
     if (amount === 0) {
@@ -136,7 +137,7 @@ router.post('/vote', (req, res) => {
                     })
             })
             console.log(`article: ${article}`)
-            res.status(200).send(article)
+            res.send(article)
             return
 
         })
@@ -149,10 +150,25 @@ router.post('/vote', (req, res) => {
         })
 })
 
+router.get('/', (req, res) => {
+    Article
+        .find()
+        .lean()
+        .then((art) => {
+            res.send(art) 
+        })
+        .catch((error) => {
+            res.status(500).send({
+                error: `Articles weren't found: ${error}`,
+                reqParams: req.params
+            })
+        })
+})
+
 router.get('/:id', (req, res) => {
     Article.findById(req.params.id)
         .then((art) => {
-            res.status(200).send(art) 
+            res.send(art) 
         })
         .catch((error) => {
             res.status(500).send({
