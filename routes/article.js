@@ -72,11 +72,11 @@ function updateNews() {
                     })
                     .catch((err) => {
                         // not in db
-                        let art = new Article(old)
-                        art['keywords'] = getPhrases(art)
-                        art['votes'] = 0
-                        console.log(art)
-                        art.save()
+                        let article = new Article(old)
+                        article['keywords'] = getPhrases(article)
+                        article['votes'] = 0
+                        console.log(article)
+                        article.save()
                     })
             })
         })
@@ -101,12 +101,12 @@ router.post('/vote', (req, res) => {
         return
     }
 
-    let article = null
+    let articleChanged = null
     Article.findById(req.body.id)
-        .then((art) => {
-            art.votes += amount
-            article = art
-            return art.save()
+        .then((article) => {
+            article.votes += amount
+            articleChanged = article
+            return article.save()
         })
         .then((data) => {
             data.keywords.forEach((word) => {
@@ -126,18 +126,18 @@ router.post('/vote', (req, res) => {
                     })
                     .catch((error) => {
                         console.log(`not found ${word}`)
-                        let keyw = new Keyword({
+                        let keyword = new Keyword({
                             word,
                             votes: [{
                                 sum: amount,
                                 time: Date.now()
                             }]
                         })
-                        keyw.save()
+                        keyword.save()
                     })
             })
-            console.log(`article: ${article}`)
-            res.send(article)
+            console.log(`article: ${articleChanged}`)
+            res.send(articleChanged)
             return
 
         })
@@ -154,8 +154,8 @@ router.get('/', (req, res) => {
     Article
         .find()
         .lean()
-        .then((art) => {
-            res.send(art) 
+        .then((articles) => {
+            res.send(articles) 
         })
         .catch((error) => {
             res.status(500).send({
@@ -167,8 +167,8 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
     Article.findById(req.params.id)
-        .then((art) => {
-            res.send(art) 
+        .then((article) => {
+            res.send(article) 
         })
         .catch((error) => {
             res.status(500).send({
