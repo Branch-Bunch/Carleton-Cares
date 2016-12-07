@@ -12,30 +12,33 @@ export default class Graph extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`keywords/trump`)
+        fetch(`keywords/top`)
             .then(res => {
                 return res.json()
             })
             .then(dataPoints => {
-                dataPoints = dataPoints
+				console.log(dataPoints.words[0])
+					/*
+                dataPoints.words[0] = dataPoints
                     .sort((a, b) => a - b)
                     .map(point => [point.time, point.sum])
                 console.log(dataPoints)
                 this.setState({
                     dataPoints
                 })
+				*/
             })
             .catch(err => console.log('Error fetching articles', err))
     }
 
   render() {
-        return (
+        this.state.dataPoints.splice(0, 0, ['Time', 'Trump'])
+		return (
             <div>
                 <Chart
                   chartType="AreaChart"
-                  //data={[['Time', 'Popularity'], this.state.dataPoints]}
-                  data={[['Time', 'Trump'], [1479651190606, 0], [1479651190706, 1], [1479651190806, 2], [1479651190906, 3], [1479651191006, 2]]}
-                  options={{}}
+                  data={this.state.dataPoints}
+				  options={{}}
                   graph_id="ScatterChart"
                   width="100%"
                   height="400px"

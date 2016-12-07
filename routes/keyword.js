@@ -22,4 +22,31 @@ router.get('/:word', (req, res) => {
     })
 })
 
+router.get('/top', (req, res) => {
+	Keyword
+		.find()
+		.lean()
+		.then((wordList) => {
+			let topWords = wordList.reduce((accumulator, word) => {
+				wordSum = word.sum[word.sum.length-1]
+				topSum = accumulator.sum
+				if (wordSum > topSum) {
+					accumulator.words = [word]
+					accumulator.sum = wordSum
+				}
+				if (wordSum === topSum) {
+					accumulator.words.push(word)
+			}
+			}, {
+				sum: 0,
+				words: []
+			})
+			res.send(topWords)
+		})
+		.catch((err) => {
+			console.log(err)
+			res.status(500).end()	
+		})
+})
+
 module.exports = router
