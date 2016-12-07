@@ -1,6 +1,8 @@
 import React from 'react'
 import Article from './Article.js'
 import {Grid, Row, Col} from 'react-bootstrap'
+import ArticleStore from '../stores/ArticleStore.js'
+import ArticleActions from '../actions/ArticleActions.js'
 
 export default class ArticleTable extends React.Component {
     constructor(props) {
@@ -8,23 +10,22 @@ export default class ArticleTable extends React.Component {
         this.state = {
             articles: []
         }
-        this.refreshState = this.refreshState.bind(this)
+        this.setArticles = this.setArticles.bind(this)
+        ArticleActions.fetchArticles()
     }
 
-    refreshState() {
-        fetch(`articles`)
-            .then(res => res.json())
-            .then((articles) => {
-                articles = articles.sort((a, b) => b.votes - a.votes)
-                this.setState({
-                    articles
-                })
-            })
-            .catch(err => console.log('Error fetching articles', err))
+    componentWillMount() {
+        ArticleStore.on('update', this.setArticles)
     }
 
-    componentDidMount() {
-        this.refreshState()
+    componentWillUnmount() {
+        ArticleStore.removeListener('update', this.setArticles)
+    }
+
+    setArticles() {
+        this.setState({
+            articles: ArticleStore.getArticles()
+        })
     }
 
     render() {
@@ -34,7 +35,7 @@ export default class ArticleTable extends React.Component {
                     {...article} 
                     key={article._id}
                     index={index + 1}
-                    handleVote={this.refreshState}
+                    //handleVote={this.refreshState}
                 />
             )
         })

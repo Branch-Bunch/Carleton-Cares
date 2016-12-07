@@ -33,6 +33,7 @@ export default class ArticleActions {
                     id
                 })
             })
+            // TODO: Could add a dispatch here if need post vote info
             .then(res => resolve(res))
             .catch((err) => {
                 console.log('Vote failed to respond')

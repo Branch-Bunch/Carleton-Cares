@@ -13,7 +13,6 @@ class ArticleStore extends EventEmitter {
     }
 
     handleAction(action) {
-        console.log(action)
         switch(action.type) {
             case 'UPDATE_ARTICLES': {
                 this.articles = action.articles 

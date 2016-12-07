@@ -1,6 +1,6 @@
 import React from 'react'
-import ArticleAction from './ArticleActions.js'
-import {Grid,Row, Col} from 'react-bootstrap'
+import ArticleButtons from './ArticleButtons.js'
+import {Grid, Row, Col} from 'react-bootstrap'
 
 export default class Article extends React.Component {
     render() {
@@ -14,7 +14,7 @@ export default class Article extends React.Component {
                          <a href={this.props.url}>{this.props.title}</a>
                      </Col>
                      <Col md={5}>
-                         <ArticleAction
+                         <ArticleButtons
                             handleVote={this.props.handleVote}
                             id={this.props._id}
                         />
