@@ -6,7 +6,7 @@ export default class Graph extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            dataPoints: []
+            votes: []
         }
     }
 
@@ -19,7 +19,7 @@ export default class Graph extends React.Component {
                 dataPoints = dataPoints
                     .sort((a, b) => a.times - b.times)
                     .map(point => [point.time, point.sum])
-                console.log(dataPoints)
+				dataPoints.unshift(['Time', words[0].word])
                 this.setState({
                     dataPoints
                 })
@@ -29,12 +29,12 @@ export default class Graph extends React.Component {
     }
 
   render() {
-        this.state.dataPoints.splice(0, 0, ['Time', 'Trump'])
+		console.log(this.state.votes)
 		return (
-            <div>
+			<div>
                 <Chart
                   chartType="AreaChart"
-                  data={this.state.dataPoints}
+                  data={this.state.votes}
 				  options={{}}
                   graph_id="ScatterChart"
                   width="100%"
