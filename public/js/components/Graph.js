@@ -6,7 +6,7 @@ export default class Graph extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            dataPoints: []
+            votes: []
         }
     }
 
@@ -15,28 +15,25 @@ export default class Graph extends React.Component {
             .then(res => {
                 return res.json()
             })
-            .then(dataPoints => {
-				console.log(dataPoints.words[0])
-					/*
-                dataPoints.words[0] = dataPoints
-                    .sort((a, b) => a - b)
+            .then(words => {
+                const dataPoints = words[0].votes 
                     .map(point => [point.time, point.sum])
-                console.log(dataPoints)
+			
+				dataPoints.unshift(['Time', words[0].word])
                 this.setState({
-                    dataPoints
-                })
-				*/
+					votes: dataPoints
+				})
             })
             .catch(err => console.log('Error fetching articles', err))
     }
 
   render() {
-        this.state.dataPoints.splice(0, 0, ['Time', 'Trump'])
+		console.log(this.state.votes)
 		return (
-            <div>
+			<div>
                 <Chart
                   chartType="AreaChart"
-                  data={this.state.dataPoints}
+                  data={this.state.votes}
 				  options={{}}
                   graph_id="ScatterChart"
                   width="100%"
