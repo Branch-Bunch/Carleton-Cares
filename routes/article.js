@@ -2,7 +2,6 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
 const Article = require('../models/ArticleModel.js')
 const Keyword = require('../models/KeywordModel.js')
 const request = require('request-promise')
@@ -150,9 +149,22 @@ router.post('/vote', (req, res) => {
         })
 })
 
-router.get('/', (req, res) => {
+router.get('/top', (req, res) => {
+    let findParams = {}
+    if (req.query.lastVote && req.query.lastDate) {
+        findParams = {
+            votes: { $lte: req.query.lastVote },
+            publishedAt: { $lt: req.query.lastDate }
+        }
+    }
+
     Article
-        .find()
+        .find(findParams)
+        .sort({
+            votes: -1,
+            publishedAt: -1
+        })
+        .limit(10)
         .lean()
         .then((articles) => {
             res.send(articles) 
