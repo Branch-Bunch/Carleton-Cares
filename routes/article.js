@@ -89,7 +89,6 @@ function getAmount(vote) {
 }
 
 router.post('/vote', (req, res) => {
-    console.log(req.body)
     let amount = getAmount(req.body.vote)
     console.log(`votes modified by ${amount} for ${req.body.id}`)
     if (amount === 0) {
@@ -137,15 +136,12 @@ router.post('/vote', (req, res) => {
             })
             console.log(`article: ${articleChanged}`)
             res.send(articleChanged)
-            return
-
         })
         .catch((error) => {
             res.status(500).send({
                 error,
                 reqBody: req.body
             })
-            return
         })
 })
 
@@ -172,7 +168,29 @@ router.get('/top', (req, res) => {
         .catch((error) => {
             res.status(500).send({
                 error: `Articles weren't found: ${error}`,
-                reqParams: req.params
+                reqQuery: req.query
+            })
+        })
+})
+
+router.get('/new', (req, res) => {
+    let findParams = {}
+    if (req.body.lastDate) {
+        findParams = { publishedAt: { $lt: req.query.lastDate } }
+    }
+
+    Article
+        .find(findParams)
+        .sort({ publishedAt: -1 })
+        .limit(10)
+        .lean()
+        .then((articles) => {
+            res.send(articles) 
+        })
+        .catch((error) => {
+            res.status(500).send({
+                error: `Newest articles weren't found: ${error}`,
+                reqQuery: req.query
             })
         })
 })
