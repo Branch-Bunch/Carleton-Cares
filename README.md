@@ -1,12 +1,6 @@
 CU-News
 ===================
 
-Table Of Contents
--------------------
-[TOC]
-
-----------
-
 CU-News is a web app that displays news articles from multiple reputable sources and finds which news articles Carleton students care about, with analysis of trends.
 
 ![screenshot of CU-News](http://i.imgur.com/L2xU1LM.png)
