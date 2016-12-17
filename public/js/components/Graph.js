@@ -6,35 +6,34 @@ export default class Graph extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            votes: []
+            dataPoints: []
         }
     }
 
     componentDidMount() {
-        fetch(`keywords/top`)
-            .then(res => {
-                return res.json()
-            })
-            .then(words => {
-                const dataPoints = words[0].votes 
+        // TODO: Use actuial data
+        fetch(`keywords/trump`)
+            .then(res => res.json())
+            .then((dataPoints) => {
+                dataPoints = dataPoints
+                    .sort((a, b) => a.times - b.times)
                     .map(point => [point.time, point.sum])
-			
-				dataPoints.unshift(['Time', words[0].word])
+                console.log(dataPoints)
                 this.setState({
-					votes: dataPoints
-				})
+                    dataPoints
+                })
             })
             .catch(err => console.log('Error fetching articles', err))
     }
 
   render() {
-		console.log(this.state.votes)
-		return (
-			<div>
+        return (
+            <div>
                 <Chart
                   chartType="AreaChart"
-                  data={this.state.votes}
-				  options={{}}
+                  //data={[['Time', 'Popularity'], this.state.dataPoints]}
+                  data={[['Time', 'Trump'], [1479651190606, 0], [1479651190706, 1], [1479651190806, 2], [1479651190906, 3], [1479651191006, 2]]}
+                  options={{}}
                   graph_id="ScatterChart"
                   width="100%"
                   height="400px"
