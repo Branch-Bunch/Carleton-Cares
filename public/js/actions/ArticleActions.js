@@ -1,13 +1,29 @@
 import dispatcher from '../dispatcher.js'
 
 export default class ArticleActions {
-    // TODO: Have different fetch calls for top/hot articles
-    static fetchArticles() {
+
+    static fetchArticles(sort, lastArticle) {
         return new Promise((resolve, reject) => {
-            fetch(`articles`)
+
+            let fetchURL = 'articles/'
+            const lastDate = (lastArticle) ? lastArticle.publishedAt: null
+
+            switch(sort) {
+                case 'NEW': {
+                    fetchURL += `new?lastDate=${lastDate}`
+                    break
+                }
+                case 'TOP': {
+                    const lastVote = (lastArticle) ? lastArticle.votes: null
+                    fetchURL += `top?lastVote=${lastVote}&lastDate=${lastDate}`
+                    break
+                }
+            }
+
+            fetch(fetchURL)
                 .then(res => res.json())
                 .then((articles) => {
-                    articles = articles.sort((a, b) => b.votes - a.votes)
+                    console.log(articles)
                     dispatcher.dispatch({
                         articles,
                         type: 'UPDATE_ARTICLES'
@@ -34,11 +50,11 @@ export default class ArticleActions {
                 })
             })
             // TODO: Could add a dispatch here if need post vote info
-            .then(res => resolve(res))
-            .catch((err) => {
-                console.log('Vote failed to respond')
-                reject(err)
-            })
+                .then(res => resolve(res.json()))
+                .catch((err) => {
+                    console.log('Vote failed to respond')
+                    reject(err)
+                })
         })
     }
 } 

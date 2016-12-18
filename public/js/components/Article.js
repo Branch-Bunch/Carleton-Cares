@@ -15,7 +15,6 @@ export default class Article extends React.Component {
                      </Col>
                      <Col md={5}>
                          <ArticleButtons
-                            handleVote={this.props.handleVote}
                             id={this.props._id}
                         />
                      </Col>

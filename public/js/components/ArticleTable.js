@@ -1,4 +1,5 @@
 import React from 'react'
+import Infinite from 'react-infinite'
 import Article from './Article.js'
 import {Grid, Row, Col} from 'react-bootstrap'
 import ArticleStore from '../stores/ArticleStore.js'
@@ -8,23 +9,33 @@ export default class ArticleTable extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            articles: []
+            articles: [],
+            sort: ArticleStore.getSort()
         }
         this.setArticles = this.setArticles.bind(this)
-        ArticleActions.fetchArticles()
+        this.setSort = this.setSort.bind(this)
+        ArticleActions.fetchArticles(this.state.sort)
     }
 
     componentWillMount() {
-        ArticleStore.on('update', this.setArticles)
+        ArticleStore.on('articleUpdate', this.setArticles)
+        ArticleStore.on('sortUpdate', this.setSort)
     }
 
     componentWillUnmount() {
-        ArticleStore.removeListener('update', this.setArticles)
+        ArticleStore.removeListener('articleUpdate', this.setArticles)
+        ArticleStore.removeListener('sortUpdate', this.setSort)
     }
 
     setArticles() {
         this.setState({
             articles: ArticleStore.getArticles()
+        })
+    }
+
+    setSort() {
+        this.setState({
+            sort: ArticleStore.getSort()
         })
     }
 
