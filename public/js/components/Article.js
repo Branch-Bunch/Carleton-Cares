@@ -28,7 +28,7 @@ export default class Article extends React.Component {
                          posted by: {this.props.author}
                      </Col>
                      <Col md={3}>
-                         at: {this.props.publishedAt}
+                         at: {new Date(this.props.publishedAt).toLocaleDateString()}
                      </Col>
                 </Row>
             </Grid>
