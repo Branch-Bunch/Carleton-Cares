@@ -79,8 +79,8 @@ function updateNews() {
                     })
             })
         })
-        .catch((error) => {
-            console.log(error)
+        .catch((err) => {
+            console.log(err)
         })
 }
 
@@ -93,7 +93,7 @@ router.post('/vote', (req, res) => {
     console.log(`votes modified by ${amount} for ${req.body.id}`)
     if (amount === 0) {
         res.status(500).send({
-            error: "Invalid value for vote",
+            err: "Invalid value for vote",
             reqBody: req.body
         })
         return
@@ -122,7 +122,7 @@ router.post('/vote', (req, res) => {
                         votes.push(newVote)
                         keyword.save()
                     })
-                    .catch((error) => {
+                    .catch((err) => {
                         console.log(`not found ${word}`)
                         let keyword = new Keyword({
                             word,
@@ -137,9 +137,9 @@ router.post('/vote', (req, res) => {
             console.log(`article: ${articleChanged}`)
             res.send(articleChanged)
         })
-        .catch((error) => {
+        .catch((err) => {
             res.status(500).send({
-                error,
+                err,
                 reqBody: req.body
             })
         })
@@ -154,20 +154,16 @@ router.get('/top', (req, res) => {
         }
     }
 
-    Article
-        .find(findParams)
-        .sort({
-            votes: -1,
-            publishedAt: -1
-        })
-        .limit(10)
-        .lean()
-        .then((articles) => {
-            res.send(articles) 
-        })
-        .catch((error) => {
+    const sortParams = {
+        votes: -1,
+        publishedAt: -1
+    }
+
+    getNextArticles(findParams, sortParams)
+        .then(articles => res.send(articles))
+        .catch((err) => {
             res.status(500).send({
-                error: `Articles weren't found: ${error}`,
+                err: `Articles weren't found: ${err}`,
                 reqQuery: req.query
             })
         })
@@ -178,18 +174,15 @@ router.get('/new', (req, res) => {
     if (req.body.lastDate) {
         findParams = { publishedAt: { $lt: req.query.lastDate } }
     }
-
-    Article
-        .find(findParams)
-        .sort({ publishedAt: -1 })
-        .limit(10)
-        .lean()
-        .then((articles) => {
-            res.send(articles) 
-        })
-        .catch((error) => {
+    const sortParams = {
+        publishedAt: -1
+    }
+    
+    getNextArticles(findParams, sortParams)
+        .then(articles => res.send(articles))
+        .catch((err) => {
             res.status(500).send({
-                error: `Newest articles weren't found: ${error}`,
+                err: `Newest articles weren't found: ${err}`,
                 reqQuery: req.query
             })
         })
@@ -200,12 +193,24 @@ router.get('/:id', (req, res) => {
         .then((article) => {
             res.send(article) 
         })
-        .catch((error) => {
+        .catch((err) => {
             res.status(500).send({
-                error,
+                err,
                 reqParams: req.params
             })
         })
 })
+
+function getNextArticles(findParams, sortParams) {
+    return new Promise((resolve, reject) => {
+        Article
+            .find(findParams)
+            .sort(sortParams)
+            .limit(10)
+            .lean()
+            .then(articles => resolve(articles))
+            .catch(err => reject(err))
+    })
+}
 
 module.exports = router
