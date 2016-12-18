@@ -30,10 +30,8 @@ class ArticleStore extends EventEmitter {
                 break
             }
             
-            case 'CHANGE_SORT': {
-                this.articles = []
+            case 'UPDATE_SORT': {
                 this.sort = action.sort
-                this.emit('articleUpdate')
                 this.emit('sortUpdate')
                 break
             }

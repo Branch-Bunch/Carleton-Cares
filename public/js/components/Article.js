@@ -20,13 +20,13 @@ export default class Article extends React.Component {
                      </Col>
                 </Row>
                 <Row>
-                    <Col md={1} mdOffset={4}>
+                    <Col md={1} mdOffset={2}>
                         Votes: {this.props.votes}
                      </Col>
-                     <Col md={2}>
+                     <Col md={3}>
                          posted by: {this.props.author}
                      </Col>
-                     <Col md={3}>
+                     <Col md={4}>
                          at: {new Date(this.props.publishedAt).toLocaleDateString()}
                      </Col>
                 </Row>

@@ -45,7 +45,7 @@ export default class ArticleActions {
     static changeSort(sort) {
         dispatcher.dispatch({
             sort,
-            type: 'CHANGE_SORT'
+            type: 'UPDATE_SORT'
         })
     }
 
