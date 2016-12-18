@@ -1,36 +1,26 @@
 import React from 'react'
 import {Button, ButtonToolbar} from 'react-bootstrap'
+import ArticleActions from '../actions/ArticleActions.js'
 
-
-export default class ArticleAction extends React.Component {
+export default class ArticleButtons extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             clicked: false
         }
+        this.toggleButton = this.toggleButton.bind(this)
     }
 
     callVote(vote) {
-        // TODO: Check if this return needs a semi colon
-        if (!this.canVote()) return null
-        fetch('articles/vote', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                vote,
-                id: this.props.id
-            })
-        })
-        .then(res => this.props.handleVote())
-        .catch(err => console.log('Vote failed to respond'))
+        if (!this.canVote()) return 
+        ArticleActions.postVote(vote, this.props.id)
+            .then(ArticleActions.fetchArticles)
     }
 
     canVote() {
         if (this.state.clicked) return false
         this.toggleButton()
-        setTimeout(() => this.toggleButton(), 10000)
+        setTimeout(this.toggleButton, 10000)
         return true
     }
 
@@ -46,7 +36,6 @@ export default class ArticleAction extends React.Component {
     }
 
     render() {
-        // TODO: Try to callVote without function invocing
         return (
             <ButtonToolbar>
                 <Button

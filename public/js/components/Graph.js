@@ -12,6 +12,7 @@ export default class Graph extends React.Component {
 
     componentDidMount() {
         // TODO: Use actuial data
+        /*
         fetch(`keywords/trump`)
             .then(res => res.json())
             .then((dataPoints) => {
@@ -24,6 +25,7 @@ export default class Graph extends React.Component {
                 })
             })
             .catch(err => console.log('Error fetching articles', err))
+            */
     }
 
   render() {
