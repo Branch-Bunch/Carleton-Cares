@@ -6,7 +6,6 @@ export default class ArticleActions {
     static fetchArticles(sort, lastArticle) {
         return new Promise((resolve, reject) => {
 
-<<<<<<< HEAD
             let fetchURL = 'articles'
             const lastDate = (lastArticle) ? lastArticle.publishedAt: null
             const lastVote = (lastArticle) ? lastArticle.votes: null
@@ -24,19 +23,6 @@ export default class ArticleActions {
                     if (lastDate && lastVote) {
                         fetchURL += `?lastVote=${lastVote}&lastDate=${lastDate}`
                     }
-=======
-            let fetchURL = 'articles/'
-            const lastDate = (lastArticle) ? lastArticle.publishedAt: null
-
-            switch(sort) {
-                case 'NEW': {
-                    fetchURL += `new?lastDate=${lastDate}`
-                    break
-                }
-                case 'TOP': {
-                    const lastVote = (lastArticle) ? lastArticle.votes: null
-                    fetchURL += `top?lastVote=${lastVote}&lastDate=${lastDate}`
->>>>>>> Refactored fecthing articles to get sorted articles,
                     break
                 }
             }
@@ -44,10 +30,6 @@ export default class ArticleActions {
             fetch(fetchURL)
                 .then(res => res.json())
                 .then((articles) => {
-<<<<<<< HEAD
-=======
-                    console.log(articles)
->>>>>>> Refactored fecthing articles to get sorted articles,
                     dispatcher.dispatch({
                         articles,
                         type: ActionTypes.UPDATE_ARTICLES 
@@ -81,11 +63,7 @@ export default class ArticleActions {
             // TODO: Could add a dispatch here if need post vote info
                 .then(res => resolve(res.json()))
                 .catch((err) => {
-<<<<<<< HEAD
                     console.log('Vote failed to respond', err)
-=======
-                    console.log('Vote failed to respond')
->>>>>>> Refactored fecthing articles to get sorted articles,
                     reject(err)
                 })
         })
