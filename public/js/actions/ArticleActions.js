@@ -5,17 +5,23 @@ export default class ArticleActions {
     static fetchArticles(sort, lastArticle) {
         return new Promise((resolve, reject) => {
 
-            let fetchURL = 'articles/'
+            let fetchURL = 'articles'
             const lastDate = (lastArticle) ? lastArticle.publishedAt: null
+            const lastVote = (lastArticle) ? lastArticle.votes: null
 
             switch(sort) {
                 case 'NEW': {
-                    fetchURL += `new?lastDate=${lastDate}`
+                    fetchURL += '/new'
+                    if (lastDate) {
+                        fetchURL += `?lastDate=${lastDate}`
+                    }
                     break
                 }
                 case 'TOP': {
-                    const lastVote = (lastArticle) ? lastArticle.votes: null
-                    fetchURL += `top?lastVote=${lastVote}&lastDate=${lastDate}`
+                    fetchURL += '/top'
+                    if (lastDate && lastVote) {
+                        fetchURL += `?lastVote=${lastVote}&lastDate=${lastDate}`
+                    }
                     break
                 }
             }
@@ -23,7 +29,6 @@ export default class ArticleActions {
             fetch(fetchURL)
                 .then(res => res.json())
                 .then((articles) => {
-                    console.log(articles)
                     dispatcher.dispatch({
                         articles,
                         type: 'UPDATE_ARTICLES'
@@ -34,6 +39,13 @@ export default class ArticleActions {
                     console.log('Error fetching articles', err)
                     reject(err)
                 })
+        })
+    }
+
+    static changeSort(sort) {
+        dispatcher.dispatch({
+            sort,
+            type: 'CHANGE_SORT'
         })
     }
 
