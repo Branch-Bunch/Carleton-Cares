@@ -14,7 +14,7 @@ class ArticleStore extends EventEmitter {
     }
 
     getLastArticle() {
-        return this.articles[articles.length - 1]
+        return this.articles[this.articles.length - 1]
     }
 
     getSort() {
@@ -23,9 +23,18 @@ class ArticleStore extends EventEmitter {
 
     handleAction(action) {
         switch(action.type) {
+
             case 'UPDATE_ARTICLES': {
                 this.articles = action.articles 
                 this.emit('articleUpdate')
+                break
+            }
+            
+            case 'CHANGE_SORT': {
+                this.articles = []
+                this.sort = action.sort
+                this.emit('articleUpdate')
+                this.emit('sortUpdate')
                 break
             }
         }
