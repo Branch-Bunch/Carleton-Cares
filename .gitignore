@@ -39,7 +39,8 @@ jspm_packages
 #passwords
 .env
 
-public/js/bundle.js
-
 #tests
 test.js
+
+# Client build
+*/build
