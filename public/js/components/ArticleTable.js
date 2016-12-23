@@ -1,5 +1,5 @@
 import React from 'react'
-import {Grid, Row, Col} from 'react-bootstrap'
+import { Grid, Row, Col } from 'react-bootstrap'
 import Article from './Article.js'
 import SortingBar from './SortingBar.js'
 import ArticleStore from '../stores/ArticleStore.js'

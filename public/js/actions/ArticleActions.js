@@ -1,4 +1,5 @@
 import dispatcher from '../dispatcher.js'
+import ActionTypes from '../constants/ActionTypes.js'
 
 export default class ArticleActions {
 
@@ -31,7 +32,7 @@ export default class ArticleActions {
                 .then((articles) => {
                     dispatcher.dispatch({
                         articles,
-                        type: 'UPDATE_ARTICLES'
+                        type: ActionTypes.UPDATE_ARTICLES 
                     })
                     resolve()
                 })
@@ -45,7 +46,7 @@ export default class ArticleActions {
     static changeSort(sort) {
         dispatcher.dispatch({
             sort,
-            type: 'UPDATE_SORT'
+            type: ActionTypes.UPDATE_SORT 
         })
     }
 
@@ -53,9 +54,7 @@ export default class ArticleActions {
         return new Promise((resolve, reject) => {
             fetch('articles/vote', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     vote,
                     id
@@ -64,7 +63,7 @@ export default class ArticleActions {
             // TODO: Could add a dispatch here if need post vote info
                 .then(res => resolve(res.json()))
                 .catch((err) => {
-                    console.log('Vote failed to respond')
+                    console.log('Vote failed to respond', err)
                     reject(err)
                 })
         })

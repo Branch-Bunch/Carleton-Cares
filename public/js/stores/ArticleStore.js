@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import dispatcher from '../dispatcher.js'
+import ActionTypes from '../constants/ActionTypes.js'
 
 class ArticleStore extends EventEmitter {
     constructor() {
@@ -23,14 +24,13 @@ class ArticleStore extends EventEmitter {
 
     handleAction(action) {
         switch(action.type) {
-
-            case 'UPDATE_ARTICLES': {
+            case ActionTypes.UPDATE_ARTICLES: {
                 this.articles = action.articles 
                 this.emit('articleUpdate')
                 break
             }
             
-            case 'UPDATE_SORT': {
+            case ActionTypes.UPDATE_SORT: {
                 this.sort = action.sort
                 this.emit('sortUpdate')
                 break

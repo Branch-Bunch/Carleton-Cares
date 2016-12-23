@@ -1,6 +1,6 @@
 import React from 'react'
 import ArticleButtons from './ArticleButtons.js'
-import {Grid, Row, Col} from 'react-bootstrap'
+import { Grid, Row, Col } from 'react-bootstrap'
 
 export default class Article extends React.Component {
     render() {

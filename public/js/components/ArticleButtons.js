@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button, ButtonToolbar} from 'react-bootstrap'
+import { Button, ButtonToolbar } from 'react-bootstrap'
 import ArticleActions from '../actions/ArticleActions.js'
 import ArticleStore from '../stores/ArticleStore.js'
 
