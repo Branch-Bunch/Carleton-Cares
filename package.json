@@ -4,10 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "build": "webpack --watch --progress --colors",
     "dev": "webpack-dev-server --hot",
+    "inspect": "node --inspect server.js",
     "postinstall": "webpack"
   },
   "repository": {
