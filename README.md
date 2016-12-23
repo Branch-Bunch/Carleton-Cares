@@ -1,7 +1,7 @@
 CU-News
 ===================
 
-CU-News is a web app that displays news articles from multiple reputable sources and finds which news articles Carleton students care about, with analysis of trends.
+CU-News is a web app that displays news articles from multiple reputable sources and finds which news articles Carleton students care about through a voting system, and analysis of trends.
 
 ![screenshot of CU-News](http://i.imgur.com/L2xU1LM.png)
 
@@ -11,14 +11,14 @@ CU-News is a web app that displays news articles from multiple reputable sources
 Voting System
 -------------
 
-Each article has key phrases extracted from it and upvoting a article adds points to all key phrases associated to that article. Popular key phrases show us issues for topics people care most about.
+Each article has key phrases extracted from it and upvoting an article adds points to all key phrases associated to that article. Popular key phrases show us issues/topics people care most about.
 
 ----------
 
 Analytics
 -------------------
 
-The popularity of all key phrases can be graphed over time and can be compared to each other
+The popularity of all key phrases can be graphed over time, and key phrases can be compared to each other.
 
 > **Note:**
 
