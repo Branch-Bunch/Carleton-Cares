@@ -1,4 +1,4 @@
-CU-News
+CU-News [![Build Status](https://travis-ci.org/CU-News/CU-News.svg?branch=master)](https://travis-ci.org/CU-News/CU-News)
 ===================
 
 CU-News is a web app that displays news articles from multiple reputable sources and finds which news articles Carleton students care about through a voting system, and analysis of trends.
