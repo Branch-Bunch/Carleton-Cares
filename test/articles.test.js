@@ -5,56 +5,62 @@ const app = require('../server.js')
 
 chai.use(chaiHttp)
 
-describe('/articles', () => {
+describe('/articles Route', () => {
     const date = new Date()
     date.setDate(date.getDate() - 1)
     const lastDate = date.toISOString()
+    const longAgoDate = new Date('1/1/2000').toISOString()
     const lastVote = 1
 
-    describe('GET /top', () => {
-        it('should 10 of the top articles in proper format', (done) => {
+    describe('GET /articles/top', () => {
+        it('should have right format response and right properties in articles', (done) => {
             chai.request(app)
                 .get('/articles/top')
                 .end((err, res) => {
-                    checkArticleRespone(res)
+                    checkReponse(res)
+                    checkArticleProperties(res)
                     done()
                 })
         })
 
-        it('should have the right properties', (done) => {
+        it('should be in sorted order from greatest to least', (done) => {
             chai.request(app)
                 .get('/articles/top')
                 .end((err, res) => {
-                    checkArticleProperties(res)
+                    checkVotesSorted(res)
                     done()
                 })
         })
     })
 
-    describe('GET /top with querys', () => {
-        it('should send next 10 articles in proper format', (done) => {
+    describe('GET /articles/top with querys', () => {
+        it('should have right format response and right properties in articles', (done) => {
             chai.request(app)
-                .get(`/articles/top?lastVote=${lastVote}&lastDate=${lastDate}`)
+                .get('/articles/top')
+                .query({ lastVote, lastDate })
                 .end((err, res) => {
-                    checkArticleRespone(res)
+                    checkReponse(res)
+                    checkArticleProperties(res)
                     done()
                 })
         })
 
-        it('should send next 10 articles with right properties', (done) => {
+        it('should be in sorted order from greatest to least', (done) => {
             const lastDate = new Date()
             lastDate.setDate(lastDate.getDate() - 1)
             chai.request(app)
-                .get(`/articles/top?lastVote=${lastVote}&lastDate=${lastDate}`)
+                .get('/articles/top')
+                .query({ lastVote, lastDate })
                 .end((err, res) => {
-                    checkArticleProperties(res)
+                    checkVotesSorted(res)
                     done()
                 })
         })
 
         it('should have votes less than lastVote and publishedAt less than lastDate', (done) => {
             chai.request(app)
-                .get(`/articles/top?lastVote=${lastVote}&lastDate=${lastDate}`)
+                .get('/articles/top')
+                .query({ lastVote, lastDate })
                 .end((err, res) => {
                     const article = res.body[0]
                     article.votes.should.be.at.most(lastVote)
@@ -62,10 +68,86 @@ describe('/articles', () => {
                     done()
                 })
         })
+
+        it('should send empty array', (done) => {
+            chai.request(app)
+                .get('/articles/top')
+                .query({ lastVote: -999, lastDate: longAgoDate })
+                .end((err, res) => {
+                    res.body.should.be.array
+                    res.body.should.be.empty
+                    done()
+                })
+        })
+    })
+
+    describe('GET /articles/new', () => {
+        it('should have right format response and right properties in articles', (done) => {
+            chai.request(app)
+                .get('/articles/new')
+                .end((err, res) => {
+                    checkReponse(res)
+                    checkArticleProperties(res)
+                    done()
+                })
+        })
+        it('should be in sorted order from newest to oldest', (done) => {
+            chai.request(app)
+                .get('/articles/new')
+                .end((err, res) => {
+                    checkDateSorted(res)
+                    done()
+                })
+        })
+    })
+
+    describe('GET /articles/new with query', () => {
+        it('should have right format response and right properties in articles', (done) => {
+            chai.request(app)
+                .get('/articles/new')
+                .query({ lastDate })
+                .end((err, res) => {
+                    checkReponse(res)
+                    checkArticleProperties(res)
+                    done()
+                })
+        })
+
+        it('should be in sorted order from newest to oldest', (done) => {
+            chai.request(app)
+                .get('/articles/new')
+                .query({ lastDate })
+                .end((err, res) => {
+                    checkDateSorted(res)
+                    done()
+                })
+        })
+
+        it('should have date less than lastDate', (done) => {
+            chai.request(app)
+                .get('/articles/new')
+                .query({ lastDate })
+                .end((err, res) => {
+                    const article = res.body[0]
+                    article.publishedAt.should.be.below(lastDate)
+                    done()
+                })
+        })
+
+        it('should send empty array', (done) => {
+            chai.request(app)
+                .get('/articles/new')
+                .query({ lastDate: longAgoDate })
+                .end((err, res) => {
+                    res.body.should.be.array
+                    res.body.should.be.empty
+                    done()
+                })
+        })
     })
 })
 
-function checkArticleRespone(res) {
+function checkReponse(res) {
     res.should.have.status(200)
     res.body.should.be.arrary
     res.body.length.should.be.equal(10)
@@ -82,4 +164,16 @@ function checkArticleProperties(res) {
     article.should.have.property('publishedAt')
     article.should.have.property('keywords')
     article.keywords.should.be.array
+}
+
+function checkVotesSorted(res) {
+    const articles = res.body
+    const sorted = articles.every((val, i, arr) => i === 0 || arr[i - 1].votes >= val.votes)
+    sorted.should.to.be.true
+}
+
+function checkDateSorted(res) {
+    const articles = res.body
+    const sorted = articles.every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
+    sorted.should.to.be.true
 }
