@@ -15,7 +15,14 @@ describe('/articles', () => {
                     done()
                 })
         })
-        it('should get 10 of the top articles')
+        it('should get 10 of the top articles', (done) => {
+            chai.request(app)
+                .get('/articles/top')
+                .then((res) => {
+                    res.body.should.be.arrary
+                    res.body.lenght.should.be.eql(10)
+                })
+        })
         it('should have the right properties')
         it('should send next 10 articles')
     })
