@@ -6,6 +6,7 @@ const express = require('express')
 const app = express()
 const articleRoute = require('./routes/article.js')
 const keywordRoute = require('./routes/keyword.js')
+const fetchArticles = require('./scripts/fetchArticles.js')
 
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGO_URI);
@@ -24,5 +25,7 @@ app.use('/keywords', keywordRoute)
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
 })
+
+fetchArticles.startFetchCycle()
 
 module.exports = app
