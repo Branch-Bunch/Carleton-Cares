@@ -171,7 +171,7 @@ router.get('/top', (req, res) => {
 
 router.get('/new', (req, res) => {
     let findParams = {}
-    if (req.body.lastDate) {
+    if (req.query.lastDate) {
         findParams = { publishedAt: { $lt: req.query.lastDate } }
     }
     const sortParams = {
