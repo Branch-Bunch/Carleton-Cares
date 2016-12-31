@@ -91,6 +91,7 @@ describe('/articles Route', () => {
                     done()
                 })
         })
+
         it('should be in sorted order from newest to oldest', (done) => {
             chai.request(app)
                 .get('/articles/new')
@@ -154,16 +155,17 @@ function checkReponse(res) {
 }
 
 function checkArticleProperties(res) {
-    const article = res.body[0]
-    article.should.have.property('author')
-    article.should.have.property('title')
-    article.should.have.property('description')
-    article.should.have.property('url')
-    article.should.have.property('urlToImage')
-    article.should.have.property('votes')
-    article.should.have.property('publishedAt')
-    article.should.have.property('keywords')
-    article.keywords.should.be.array
+    res.body.forEach((article) => {
+        article.should.have.property('author')
+        article.should.have.property('title')
+        article.should.have.property('description')
+        article.should.have.property('url')
+        article.should.have.property('urlToImage')
+        article.should.have.property('votes')
+        article.should.have.property('publishedAt')
+        article.should.have.property('keywords')
+        article.keywords.should.be.array
+    })
 }
 
 function checkVotesSorted(res) {
