@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = {
     entry: './public/js/index.js',
     output: {
-        path: __dirname, filename: './public/js/bundle.js'
+        path: __dirname, filename: './public/build/bundle.js'
     },
     devServer: {
         contentBase: './public/'

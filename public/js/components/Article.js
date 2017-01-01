@@ -1,6 +1,6 @@
 import React from 'react'
 import ArticleButtons from './ArticleButtons.js'
-import {Grid, Row, Col} from 'react-bootstrap'
+import { Grid, Row, Col } from 'react-bootstrap'
 
 export default class Article extends React.Component {
     render() {
@@ -15,20 +15,19 @@ export default class Article extends React.Component {
                      </Col>
                      <Col md={5}>
                          <ArticleButtons
-                            handleVote={this.props.handleVote}
                             id={this.props._id}
                         />
                      </Col>
                 </Row>
                 <Row>
-                    <Col md={1} mdOffset={4}>
+                    <Col md={1} mdOffset={2}>
                         Votes: {this.props.votes}
                      </Col>
-                     <Col md={2}>
+                     <Col md={3}>
                          posted by: {this.props.author}
                      </Col>
-                     <Col md={3}>
-                         at: {this.props.publishedAt}
+                     <Col md={4}>
+                         at: {new Date(this.props.publishedAt).toLocaleDateString()}
                      </Col>
                 </Row>
             </Grid>

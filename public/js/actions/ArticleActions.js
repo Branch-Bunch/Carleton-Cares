@@ -1,16 +1,38 @@
 import dispatcher from '../dispatcher.js'
+import ActionTypes from '../constants/ActionTypes.js'
 
 export default class ArticleActions {
-    // TODO: Have different fetch calls for top/hot articles
-    static fetchArticles() {
+
+    static fetchArticles(sort, lastArticle) {
         return new Promise((resolve, reject) => {
-            fetch(`articles`)
+
+            let fetchURL = 'articles'
+            const lastDate = (lastArticle) ? lastArticle.publishedAt: null
+            const lastVote = (lastArticle) ? lastArticle.votes: null
+
+            switch(sort) {
+                case 'NEW': {
+                    fetchURL += '/new'
+                    if (lastDate) {
+                        fetchURL += `?lastDate=${lastDate}`
+                    }
+                    break
+                }
+                case 'TOP': {
+                    fetchURL += '/top'
+                    if (lastDate && lastVote) {
+                        fetchURL += `?lastVote=${lastVote}&lastDate=${lastDate}`
+                    }
+                    break
+                }
+            }
+
+            fetch(fetchURL)
                 .then(res => res.json())
                 .then((articles) => {
-                    articles = articles.sort((a, b) => b.votes - a.votes)
                     dispatcher.dispatch({
                         articles,
-                        type: 'UPDATE_ARTICLES'
+                        type: ActionTypes.UPDATE_ARTICLES 
                     })
                     resolve()
                 })
@@ -21,24 +43,29 @@ export default class ArticleActions {
         })
     }
 
+    static changeSort(sort) {
+        dispatcher.dispatch({
+            sort,
+            type: ActionTypes.UPDATE_SORT 
+        })
+    }
+
     static postVote(vote, id) {
         return new Promise((resolve, reject) => {
             fetch('articles/vote', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     vote,
                     id
                 })
             })
             // TODO: Could add a dispatch here if need post vote info
-            .then(res => resolve(res))
-            .catch((err) => {
-                console.log('Vote failed to respond')
-                reject(err)
-            })
+                .then(res => resolve(res.json()))
+                .catch((err) => {
+                    console.log('Vote failed to respond', err)
+                    reject(err)
+                })
         })
     }
 } 

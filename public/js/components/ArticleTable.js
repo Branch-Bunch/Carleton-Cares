@@ -1,6 +1,7 @@
 import React from 'react'
+import { Grid, Row, Col } from 'react-bootstrap'
 import Article from './Article.js'
-import {Grid, Row, Col} from 'react-bootstrap'
+import SortingBar from './SortingBar.js'
 import ArticleStore from '../stores/ArticleStore.js'
 import ArticleActions from '../actions/ArticleActions.js'
 
@@ -8,23 +9,33 @@ export default class ArticleTable extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            articles: []
+            articles: [],
+            sort: ArticleStore.getSort()
         }
         this.setArticles = this.setArticles.bind(this)
-        ArticleActions.fetchArticles()
+        this.setSort = this.setSort.bind(this)
+        ArticleActions.fetchArticles(this.state.sort)
     }
 
     componentWillMount() {
-        ArticleStore.on('update', this.setArticles)
+        ArticleStore.on('articleUpdate', this.setArticles)
+        ArticleStore.on('sortUpdate', this.setSort)
     }
 
     componentWillUnmount() {
-        ArticleStore.removeListener('update', this.setArticles)
+        ArticleStore.removeListener('articleUpdate', this.setArticles)
+        ArticleStore.removeListener('sortUpdate', this.setSort)
     }
 
     setArticles() {
         this.setState({
             articles: ArticleStore.getArticles()
+        })
+    }
+
+    setSort() {
+        this.setState({
+            sort: ArticleStore.getSort()
         })
     }
 
@@ -35,20 +46,24 @@ export default class ArticleTable extends React.Component {
                     {...article} 
                     key={article._id}
                     index={index + 1}
-                    //handleVote={this.refreshState}
                 />
             )
         })
 
-        //TODO: Try bootstrap componets without {}'s
+        // TODO: Find a better way to center the SortingBar
         return (
             <Grid>
                 <Row>
+                    <Col mdOffset={5}>
+                        <SortingBar />
+                    </Col>
+                </Row>
+                <Row>
                     <Col md={1} mdOffset={1}>
-                        <h3>Number</h3>
+                        <h3>#</h3>
                      </Col>
                      <Col md={5}>
-                         <h3>Article</h3>
+                         <h3>{this.state.sort} Articles</h3>
                      </Col>
                 </Row>
                 <Row>

@@ -2,7 +2,6 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
 const Article = require('../models/ArticleModel.js')
 const Keyword = require('../models/KeywordModel.js')
 const request = require('request-promise')
@@ -13,7 +12,7 @@ const nlcstToString = require('nlcst-to-string')
 const router = express.Router()
 
 // 3 600 000 is 1 hour
-const REFRESH = 300000
+const REFRESH = 3600000
 
 setInterval(() => {
     updateNews()
@@ -80,8 +79,8 @@ function updateNews() {
                     })
             })
         })
-        .catch((error) => {
-            console.log(error)
+        .catch((err) => {
+            console.log(err)
         })
 }
 
@@ -90,12 +89,11 @@ function getAmount(vote) {
 }
 
 router.post('/vote', (req, res) => {
-    console.log(req.body)
     let amount = getAmount(req.body.vote)
     console.log(`votes modified by ${amount} for ${req.body.id}`)
     if (amount === 0) {
         res.status(500).send({
-            error: "Invalid value for vote",
+            err: "Invalid value for vote",
             reqBody: req.body
         })
         return
@@ -124,7 +122,7 @@ router.post('/vote', (req, res) => {
                         votes.push(newVote)
                         keyword.save()
                     })
-                    .catch((error) => {
+                    .catch((err) => {
                         console.log(`not found ${word}`)
                         let keyword = new Keyword({
                             word,
@@ -138,29 +136,54 @@ router.post('/vote', (req, res) => {
             })
             console.log(`article: ${articleChanged}`)
             res.send(articleChanged)
-            return
-
         })
-        .catch((error) => {
+        .catch((err) => {
             res.status(500).send({
-                error,
+                err,
                 reqBody: req.body
             })
-            return
         })
 })
 
-router.get('/', (req, res) => {
-    Article
-        .find()
-        .lean()
-        .then((articles) => {
-            res.send(articles) 
-        })
-        .catch((error) => {
+router.get('/top', (req, res) => {
+    let findParams = {}
+    if (req.query.lastVote && req.query.lastDate) {
+        findParams = {
+            votes: { $lte: req.query.lastVote },
+            publishedAt: { $lt: req.query.lastDate }
+        }
+    }
+
+    const sortParams = {
+        votes: -1,
+        publishedAt: -1
+    }
+
+    getNextArticles(findParams, sortParams)
+        .then(articles => res.send(articles))
+        .catch((err) => {
             res.status(500).send({
-                error: `Articles weren't found: ${error}`,
-                reqParams: req.params
+                err: `Articles weren't found: ${err}`,
+                reqQuery: req.query
+            })
+        })
+})
+
+router.get('/new', (req, res) => {
+    let findParams = {}
+    if (req.query.lastDate) {
+        findParams = { publishedAt: { $lt: req.query.lastDate } }
+    }
+    const sortParams = {
+        publishedAt: -1
+    }
+    
+    getNextArticles(findParams, sortParams)
+        .then(articles => res.send(articles))
+        .catch((err) => {
+            res.status(500).send({
+                err: `Newest articles weren't found: ${err}`,
+                reqQuery: req.query
             })
         })
 })
@@ -170,12 +193,24 @@ router.get('/:id', (req, res) => {
         .then((article) => {
             res.send(article) 
         })
-        .catch((error) => {
+        .catch((err) => {
             res.status(500).send({
-                error,
+                err,
                 reqParams: req.params
             })
         })
 })
+
+function getNextArticles(findParams, sortParams) {
+    return new Promise((resolve, reject) => {
+        Article
+            .find(findParams)
+            .sort(sortParams)
+            .limit(10)
+            .lean()
+            .then(articles => resolve(articles))
+            .catch(err => reject(err))
+    })
+}
 
 module.exports = router
