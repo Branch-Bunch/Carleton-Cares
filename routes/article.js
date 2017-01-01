@@ -96,7 +96,7 @@ router.get('/new', (req, res) => {
     const sortParams = {
         publishedAt: -1
     }
-    
+
     getNextArticles(findParams, sortParams)
         .then(articles => res.send(articles))
         .catch((err) => {
