@@ -176,7 +176,7 @@ describe('/articles Route', () => {
 function checkReponse(res) {
     res.should.have.status(200)
     res.body.should.be.arrary
-    res.body.length.should.be.equal(10)
+    res.body.length.should.be.at.most(10)
 }
 
 function checkArticleProperties(res) {
