@@ -1,6 +1,6 @@
 'use strict'
 
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config({ silent: true })
 const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
