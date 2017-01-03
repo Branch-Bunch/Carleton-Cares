@@ -46,13 +46,23 @@ describe('/articles Route', () => {
         })
 
         it('should respond with an error if an article id is not found', (done) => {
-            const id = '5846399f9ba87af2501fb03f'
+            const fakeId = '5846399f9ba87af2501fb03f'
             chai.request(app)
-                .get(`/articles/${id}`)
+                .get(`/articles/${fakeId}`)
                 .end((err, res) => {
-                    res.body.should.have.property('err')
-                    res.body.reqParams.id.should.equal(id)
-                    res.status.should.equal(500)
+                    checkValidError(res)
+                    res.body.reqParams.id.should.equal(fakeId)
+                    done()
+                })
+        })
+
+        it('should respond with an error if the id supplied is not in the valid id format', (done) => {
+            const invalidId = 'notavalidId'
+            chai.request(app)
+                .get(`/articles/${invalidId}`)
+                .end((err, res) => {
+                    checkValidError(res)
+                    res.body.reqParams.id.should.equal(invalidId)
                     done()
                 })
         })
@@ -196,6 +206,13 @@ function checkSingleArticleProperties(article) {
     article.should.have.property('publishedAt')
     article.should.have.property('keywords')
     article.keywords.should.be.array
+}
+
+function checkValidError(res) {
+    res.should.have.status(500)
+    res.body.should.not.be.empty
+    res.body.should.have.property('err')
+    res.body.should.have.property('reqParams')
 }
 
 function checkVotesSorted(res) {
