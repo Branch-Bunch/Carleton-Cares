@@ -39,7 +39,6 @@ router.get('/top', (req, res) => {
 				sum: 0,
 				words: []
 			})
-			console.log(topWords.words)
 			res.send(topWords.words)
 		})
 		.catch((err) => {
