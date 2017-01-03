@@ -12,6 +12,10 @@ export default class ArticleButtons extends React.Component {
         this.toggleButton = this.toggleButton.bind(this)
     }
 
+    componentWillUnmount() {
+        clearTimeout(this.timeout)
+    }
+
     callVote(vote) {
         if (!this.canVote()) return 
         ArticleActions.postVote(vote, this.props.id)
@@ -21,7 +25,7 @@ export default class ArticleButtons extends React.Component {
     canVote() {
         if (this.state.clicked) return false
         this.toggleButton()
-        setTimeout(this.toggleButton, 10000)
+        this.timeout = setTimeout(this.toggleButton, 10000)
         return true
     }
 
