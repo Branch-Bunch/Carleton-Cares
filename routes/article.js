@@ -96,7 +96,7 @@ router.get('/new', (req, res) => {
     const sortParams = {
         publishedAt: -1
     }
-    
+
     getNextArticles(findParams, sortParams)
         .then(articles => res.send(articles))
         .catch((err) => {
@@ -110,9 +110,11 @@ router.get('/new', (req, res) => {
 router.get('/:id', (req, res) => {
     Article.findById(req.params.id)
         .then((article) => {
+            if (!article) throw new Error('No articles found')
             res.send(article) 
         })
         .catch((err) => {
+            err = err.toString()
             res.status(500).send({
                 err,
                 reqParams: req.params
