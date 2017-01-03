@@ -15,7 +15,7 @@ export default class ArticleButtons extends React.Component {
     callVote(vote) {
         if (!this.canVote()) return 
         ArticleActions.postVote(vote, this.props.id)
-            .then(() => ArticleActions.fetchArticles(ArticleStore.getSort(), ArticleStore.getLastArticle()))
+            .then(() => ArticleActions.fetchArticles(ArticleStore.getSort()))
     }
 
     canVote() {
