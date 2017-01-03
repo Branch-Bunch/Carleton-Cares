@@ -2,6 +2,7 @@ const request = require('request-promise')
 const retext = require('retext')
 const retextkeywords = require('retext-keywords')
 const nlcstToString = require('nlcst-to-string')
+const Article = require('../models/ArticleModel.js')
 
 // 3 600 000 is 1 hour
 const REFRESH = 3600000
