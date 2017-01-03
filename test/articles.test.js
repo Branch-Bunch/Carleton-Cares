@@ -176,6 +176,7 @@ describe('/articles Route', () => {
 function checkReponse(res) {
     res.should.have.status(200)
     res.body.should.be.arrary
+    res.body.should.not.be.empty
     res.body.length.should.be.at.most(10)
 }
 
@@ -200,11 +201,11 @@ function checkSingleArticleProperties(article) {
 function checkVotesSorted(res) {
     const articles = res.body
     const sorted = articles.every((val, i, arr) => i === 0 || arr[i - 1].votes >= val.votes)
-    sorted.should.to.be.true
+    sorted.should.be.true
 }
 
 function checkDateSorted(res) {
     const articles = res.body
     const sorted = articles.every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
-    sorted.should.to.be.true
+    sorted.should.be.true
 }
