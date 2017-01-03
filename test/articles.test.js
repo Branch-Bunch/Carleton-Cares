@@ -33,6 +33,41 @@ describe('/articles Route', () => {
         })
     })
 
+    describe('GET /articles/:id', () => {
+        it('should respond with single article of same id', (done) => {
+            const id = '5846399f9ba87af2501fb035'
+            chai.request(app)
+                .get(`/articles/${id}`)
+                .end((err, res) => {
+                    checkSingleArticleProperties(res.body)
+                    res.body._id.should.equal(id)
+                    done()
+                })
+        })
+
+        it('should respond with an error if an article id is not found', (done) => {
+            const fakeId = '5846399f9ba87af2501fb03f'
+            chai.request(app)
+                .get(`/articles/${fakeId}`)
+                .end((err, res) => {
+                    checkValidError(res)
+                    res.body.reqParams.id.should.equal(fakeId)
+                    done()
+                })
+        })
+
+        it('should respond with an error if the id supplied is not in the valid id format', (done) => {
+            const invalidId = 'notavalidId'
+            chai.request(app)
+                .get(`/articles/${invalidId}`)
+                .end((err, res) => {
+                    checkValidError(res)
+                    res.body.reqParams.id.should.equal(invalidId)
+                    done()
+                })
+        })
+    })
+
     describe('GET /articles/top with querys', () => {
         it('should have right format response and right properties in articles', (done) => {
             chai.request(app)
@@ -157,16 +192,27 @@ function checkReponse(res) {
 
 function checkArticleProperties(res) {
     res.body.forEach((article) => {
-        article.should.have.property('author')
-        article.should.have.property('title')
-        article.should.have.property('description')
-        article.should.have.property('url')
-        article.should.have.property('urlToImage')
-        article.should.have.property('votes')
-        article.should.have.property('publishedAt')
-        article.should.have.property('keywords')
-        article.keywords.should.be.array
+        checkSingleArticleProperties(article)
     })
+}
+
+function checkSingleArticleProperties(article) {
+    article.should.have.property('author')
+    article.should.have.property('title')
+    article.should.have.property('description')
+    article.should.have.property('url')
+    article.should.have.property('urlToImage')
+    article.should.have.property('votes')
+    article.should.have.property('publishedAt')
+    article.should.have.property('keywords')
+    article.keywords.should.be.array
+}
+
+function checkValidError(res) {
+    res.should.have.status(500)
+    res.body.should.not.be.empty
+    res.body.should.have.property('err')
+    res.body.should.have.property('reqParams')
 }
 
 function checkVotesSorted(res) {
