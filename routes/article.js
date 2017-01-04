@@ -13,7 +13,7 @@ router.post('/vote', (req, res) => {
     if (amount === 0) {
         res.status(500).send({
             err: "Invalid value for vote",
-            reqBody: req.body
+            givens: req.body
         })
         return
     }
@@ -59,7 +59,7 @@ router.post('/vote', (req, res) => {
         .catch((err) => {
             res.status(500).send({
                 err,
-                reqBody: req.body
+                givens: req.body
             })
         })
 })
@@ -83,7 +83,7 @@ router.get('/top', (req, res) => {
         .catch((err) => {
             res.status(500).send({
                 err: `Articles weren't found: ${err}`,
-                reqQuery: req.query
+                givens: req.query
             })
         })
 })
@@ -102,7 +102,7 @@ router.get('/new', (req, res) => {
         .catch((err) => {
             res.status(500).send({
                 err: `Newest articles weren't found: ${err}`,
-                reqQuery: req.query
+                givens: req.query
             })
         })
 })
@@ -116,7 +116,7 @@ router.get('/:id', (req, res) => {
         .catch((err) => {
             res.status(500).send({
                 err,
-                reqParams: req.params
+                givens: req.params
             })
         })
 })
