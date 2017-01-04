@@ -12,17 +12,12 @@ export default class Graph extends React.Component {
 
     componentDidMount() {
         fetch(`keywords/top`)
-            .then(res => return res.json())
+            .then(res => res.json())
             .then(words => {
-                // for now graphing first word associated with the top article
-                // createing array of dataPoints
                 const dataPoints = words[0].votes
                     .map(point => [point.time, point.sum])
-                // adding axis to dataPoints array
 				dataPoints.unshift(['Time', words[0].word])
-                this.setState({
-					dataPoints: dataPoints
-				})
+                this.setState({ dataPoints })
             })
             .catch(err => console.log('Error fetching articles', err))
     }
