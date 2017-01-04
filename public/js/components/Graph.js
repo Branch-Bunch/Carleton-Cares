@@ -12,9 +12,7 @@ export default class Graph extends React.Component {
 
     componentDidMount() {
         fetch(`keywords/top`)
-            .then(res => {
-                return res.json()
-            })
+            .then(res => return res.json())
             .then(words => {
                 // for now graphing first word associated with the top article
                 // createing array of dataPoints
@@ -29,9 +27,9 @@ export default class Graph extends React.Component {
             .catch(err => console.log('Error fetching articles', err))
     }
 
-  render() {
-		return (
-			<div>
+    render() {
+        return (
+            <div>
                 <Chart
                   chartType="AreaChart"
                   data={this.state.dataPoints}

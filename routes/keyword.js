@@ -7,13 +7,17 @@ const Keyword = require('../models/KeywordModel.js')
 
 const router = express.Router()
 
+
 router.get('/:word', (req, res) => {
     let word = req.params.word
-    Keyword.find({ word }).lean().then((wordList) => {
+    Keyword.find({word: word})
+    .lean()
+    .then((wordList) => {
         res.send(wordList[0].votes)
-    }).catch((err) => {
+    })
+    .catch((err) => {
         res.status(500).send({
-            err: `Keyword not found: ${err}`,
+            err,
             givens: req.params
         })
     })
@@ -24,7 +28,7 @@ router.get('/top', (req, res) => {
 		.find()
 		.lean()
 		.then((wordList) => {
-			let topWords = wordList.reduce((accumulator, word) => {
+			const topWords = wordList.reduce((accumulator, word) => {
 				let wordSum = word.votes[word.votes.length-1].sum
 				let topSum = accumulator.sum
 				if (wordSum > topSum) {
@@ -43,7 +47,10 @@ router.get('/top', (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err)
-			res.status(500).end()
+			res.status(500).send({
+                err,
+                givens: req.query
+            })
 		})
 })
 
