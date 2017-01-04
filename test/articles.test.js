@@ -51,7 +51,7 @@ describe('/articles Route', () => {
                 .get(`/articles/${fakeId}`)
                 .end((err, res) => {
                     checkValidError(res)
-                    res.body.reqParams.id.should.equal(fakeId)
+                    res.body.givens.id.should.equal(fakeId)
                     done()
                 })
         })
@@ -62,7 +62,7 @@ describe('/articles Route', () => {
                 .get(`/articles/${invalidId}`)
                 .end((err, res) => {
                     checkValidError(res)
-                    res.body.reqParams.id.should.equal(invalidId)
+                    res.body.givens.id.should.equal(invalidId)
                     done()
                 })
         })
@@ -212,7 +212,7 @@ function checkValidError(res) {
     res.should.have.status(500)
     res.body.should.not.be.empty
     res.body.should.have.property('err')
-    res.body.should.have.property('reqParams')
+    res.body.should.have.property('givens')
 }
 
 function checkVotesSorted(res) {
