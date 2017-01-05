@@ -4,11 +4,11 @@ import Graph from './Graph.js'
 
 export default class App extends React.Component {
   render() {
-        return (
-            <div>
-                <Graph />
-                <ArticleTable />
-            </div>
-        )
-    }
+    return (
+      <div>
+        <Graph />
+        <ArticleTable />
+      </div>
+    )
+  }
 }
