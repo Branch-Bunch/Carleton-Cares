@@ -1,4 +1,4 @@
-'use strict'
+
 
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -18,43 +18,43 @@ router.post('/vote', (req, res) => {
         return
     }
 
-    let articleChanged = null
-    Article.findById(req.body.id)
+  let articleChanged = null
+  Article.findById(req.body.id)
         .then((article) => {
-            article.votes += amount
-            articleChanged = article
-            return article.save()
+          article.votes += amount
+          articleChanged = article
+          return article.save()
         })
         .then((data) => {
-            data.keywords.forEach((word) => {
+          data.keywords.forEach((word) => {
                 // save keywords, add to their points
-                console.log(`modifying ${word}`)
-                Keyword.findOne({word})
+            console.log(`modifying ${word}`)
+            Keyword.findOne({ word })
                     .then((keyword) => {
-                        console.log(`keyword.votes: ${keyword.votes}`)
-                        let votes = keyword.votes
-                        let len = votes.length
-                        let newVote = {
-                            sum: votes[len - 1].sum + amount,
-                            time: Date.now()
-                        }
-                        votes.push(newVote)
-                        keyword.save()
+                      console.log(`keyword.votes: ${keyword.votes}`)
+                      const votes = keyword.votes
+                      const len = votes.length
+                      const newVote = {
+                        sum: votes[len - 1].sum + amount,
+                        time: Date.now(),
+                      }
+                      votes.push(newVote)
+                      keyword.save()
                     })
                     .catch((err) => {
-                        console.log(`not found ${word}`)
-                        let keyword = new Keyword({
-                            word,
-                            votes: [{
-                                sum: amount,
-                                time: Date.now()
-                            }]
-                        })
-                        keyword.save()
+                      console.log(`not found ${word}`)
+                      const keyword = new Keyword({
+                        word,
+                        votes: [{
+                          sum: amount,
+                          time: Date.now(),
+                        }],
+                      })
+                      keyword.save()
                     })
-            })
-            console.log(`article: ${articleChanged}`)
-            res.send(articleChanged)
+          })
+          console.log(`article: ${articleChanged}`)
+          res.send(articleChanged)
         })
         .catch((err) => {
             res.status(500).send({
@@ -65,20 +65,20 @@ router.post('/vote', (req, res) => {
 })
 
 router.get('/top', (req, res) => {
-    let findParams = {}
-    if (req.query.lastVote && req.query.lastDate) {
-        findParams = {
-            votes: { $lte: req.query.lastVote },
-            publishedAt: { $lt: req.query.lastDate }
-        }
+  let findParams = {}
+  if (req.query.lastVote && req.query.lastDate) {
+    findParams = {
+      votes: { $lte: req.query.lastVote },
+      publishedAt: { $lt: req.query.lastDate },
     }
+  }
 
-    const sortParams = {
-        votes: -1,
-        publishedAt: -1
-    }
+  const sortParams = {
+    votes: -1,
+    publishedAt: -1,
+  }
 
-    getNextArticles(findParams, sortParams)
+  getNextArticles(findParams, sortParams)
         .then(articles => res.send(articles))
         .catch((err) => {
             res.status(500).send({
@@ -89,15 +89,15 @@ router.get('/top', (req, res) => {
 })
 
 router.get('/new', (req, res) => {
-    let findParams = {}
-    if (req.query.lastDate) {
-        findParams = { publishedAt: { $lt: req.query.lastDate } }
-    }
-    const sortParams = {
-        publishedAt: -1
-    }
+  let findParams = {}
+  if (req.query.lastDate) {
+    findParams = { publishedAt: { $lt: req.query.lastDate } }
+  }
+  const sortParams = {
+    publishedAt: -1,
+  }
 
-    getNextArticles(findParams, sortParams)
+  getNextArticles(findParams, sortParams)
         .then(articles => res.send(articles))
         .catch((err) => {
             res.status(500).send({
@@ -108,10 +108,10 @@ router.get('/new', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-    Article.findById(req.params.id)
+  Article.findById(req.params.id)
         .then((article) => {
-            if (!article) throw 'No articles found'
-            res.send(article) 
+          if (!article) throw 'No articles found'
+          res.send(article)
         })
         .catch((err) => {
             res.status(500).send({
@@ -122,19 +122,19 @@ router.get('/:id', (req, res) => {
 })
 
 function getNextArticles(findParams, sortParams) {
-    return new Promise((resolve, reject) => {
-        Article
+  return new Promise((resolve, reject) => {
+    Article
             .find(findParams)
             .sort(sortParams)
             .limit(10)
             .lean()
             .then(articles => resolve(articles))
             .catch(err => reject(err))
-    })
+  })
 }
 
 function getAmount(vote) {
-    return Math.abs(vote) / vote || 0
+  return Math.abs(vote) / vote || 0
 }
 
 module.exports = router

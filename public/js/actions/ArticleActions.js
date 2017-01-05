@@ -3,69 +3,68 @@ import ActionTypes from '../constants/ActionTypes.js'
 
 export default class ArticleActions {
 
-    static fetchArticles(sort, lastArticle) {
-        return new Promise((resolve, reject) => {
+  static fetchArticles(sort, lastArticle) {
+    return new Promise((resolve, reject) => {
+      let fetchURL = 'articles'
+      const lastDate = (lastArticle) ? lastArticle.publishedAt : null
+      const lastVote = (lastArticle) ? lastArticle.votes : null
 
-            let fetchURL = 'articles'
-            const lastDate = (lastArticle) ? lastArticle.publishedAt: null
-            const lastVote = (lastArticle) ? lastArticle.votes: null
+      switch (sort) {
+        case 'NEW': {
+          fetchURL += '/new'
+          if (lastDate) {
+            fetchURL += `?lastDate=${lastDate}`
+          }
+          break
+        }
+        case 'TOP': {
+          fetchURL += '/top'
+          if (lastDate && lastVote) {
+            fetchURL += `?lastVote=${lastVote}&lastDate=${lastDate}`
+          }
+          break
+        }
+      }
 
-            switch(sort) {
-                case 'NEW': {
-                    fetchURL += '/new'
-                    if (lastDate) {
-                        fetchURL += `?lastDate=${lastDate}`
-                    }
-                    break
-                }
-                case 'TOP': {
-                    fetchURL += '/top'
-                    if (lastDate && lastVote) {
-                        fetchURL += `?lastVote=${lastVote}&lastDate=${lastDate}`
-                    }
-                    break
-                }
-            }
-
-            fetch(fetchURL)
+      fetch(fetchURL)
                 .then(res => res.json())
                 .then((articles) => {
-                    dispatcher.dispatch({
-                        articles,
-                        type: ActionTypes.UPDATE_ARTICLES 
-                    })
-                    resolve()
+                  dispatcher.dispatch({
+                    articles,
+                    type: ActionTypes.UPDATE_ARTICLES,
+                  })
+                  resolve()
                 })
-                .catch((err) =>  {
-                    console.log('Error fetching articles', err)
-                    reject(err)
+                .catch((err) => {
+                  console.log('Error fetching articles', err)
+                  reject(err)
                 })
-        })
-    }
+    })
+  }
 
-    static changeSort(sort) {
-        dispatcher.dispatch({
-            sort,
-            type: ActionTypes.UPDATE_SORT 
-        })
-    }
+  static changeSort(sort) {
+    dispatcher.dispatch({
+      sort,
+      type: ActionTypes.UPDATE_SORT,
+    })
+  }
 
-    static postVote(vote, id) {
-        return new Promise((resolve, reject) => {
-            fetch('articles/vote', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    vote,
-                    id
-                })
-            })
+  static postVote(vote, id) {
+    return new Promise((resolve, reject) => {
+      fetch('articles/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vote,
+          id,
+        }),
+      })
             // TODO: Could add a dispatch here if need post vote info
                 .then(res => resolve(res.json()))
                 .catch((err) => {
-                    console.log('Vote failed to respond', err)
-                    reject(err)
+                  console.log('Vote failed to respond', err)
+                  reject(err)
                 })
-        })
-    }
-} 
+    })
+  }
+}

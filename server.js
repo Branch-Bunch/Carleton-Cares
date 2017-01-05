@@ -1,4 +1,4 @@
-'use strict'
+
 
 const dotenv = require('dotenv').config({ silent: true })
 const bodyParser = require('body-parser')
@@ -9,21 +9,21 @@ const keywordRoute = require('./routes/keyword.js')
 const fetchArticles = require('./scripts/fetchArticles.js')
 
 const mongoose = require('mongoose')
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGO_URI)
 mongoose.Promise = Promise
 
 const PORT = process.env.PORT
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
-    extended: true
+  extended: true,
 }))
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(`${__dirname}/public`))
 app.use('/articles', articleRoute)
 app.use('/keywords', keywordRoute)
 
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`)
+  console.log(`Server listening on port ${PORT}`)
 })
 
 fetchArticles.startFetchCycle()
