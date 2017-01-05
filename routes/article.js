@@ -20,51 +20,52 @@ function getAmount(vote) {
 }
 
 router.post('/vote', (req, res) => {
-  const amount = getAmount(req.body.vote)
-  if (amount === 0) {
-    res.status(500).send({
-      err: 'Invalid value for vote',
-      givens: req.body,
-    })
-    return
-  }
+    let amount = getAmount(req.body.vote)
+    if (!amount) {
+        res.status(500).send({
+            err: "Invalid value for vote",
+            givens: req.body
+        })
+        return
+    }
 
-  let articleChanged = null
-  Article.findById(req.body.id)
-    .then((article) => {
-      article.votes += amount
-      articleChanged = article
-      return article.save()
-    })
-    .then((data) => {
-      data.keywords.forEach((word) => {
-        Keyword.findOne({ word })
-          .then((keyword) => {
-            const votes = keyword.votes
-            const len = votes.length
-            const newVote = {
-              sum: votes[len - 1].sum + amount,
-              time: Date.now(),
-            }
-            votes.push(newVote)
-            keyword.save()
-          })
-          .catch((err) => {
-            const keyword = new Keyword({
-              word,
-              votes: [{
-                sum: amount,
-                time: Date.now(),
-              }],
+    let articleChanged = null
+    Article.findById(req.body.id)
+        .then((article) => {
+            article.votes += amount
+            articleChanged = article
+            return article.save()
+        })
+        .then((data) => {
+            data.keywords.forEach((word) => {
+                Keyword.findOne({word})
+                    .then((keyword) => {
+                        let votes = keyword.votes
+                        let len = votes.length
+                        let newVote = {
+                            sum: votes[len - 1].sum + amount,
+                            time: Date.now()
+                        }
+                        votes.push(newVote)
+                        keyword.save()
+                    })
+                    .catch((err) => {
+                        let keyword = new Keyword({
+                            word,
+                            votes: [{
+                                sum: amount,
+                                time: Date.now()
+                            }]
+                        })
+                        keyword.save()
+                    })
             })
-            keyword.save()
-          })
-      })
-      res.send(articleChanged)
-    })
-    .catch((err) => {
-      res.status(500).send({
-        err: err.toString(),
+            res.send(articleChanged)
+        })
+        .catch((err) => {
+            res.status(500).send({
+                err,
+                givens: req.body
         givens: req.body,
       })
     })
