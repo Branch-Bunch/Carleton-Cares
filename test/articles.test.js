@@ -219,7 +219,7 @@ describe('/articles Route', () => {
 
         it('should respond with an error when an invalid id is provided', (done) => {
             const fakeId = '5846399f9ba87af2501fb03f'
-            postVoteWithErrorExpected(fakeId, 1)
+            postVote(fakeId, 1)
                 .then((res) => {
                     checkValidError(res)
                     res.body.givens.id.should.equal(fakeId)
@@ -229,7 +229,7 @@ describe('/articles Route', () => {
         })
 
         it('should respond with an error when an invalid vote is provided', (done) => {
-            postVoteWithErrorExpected(id, 'badVote')
+            postVote(id, 'badVote')
                 .then((res) => {
                     checkValidError(res)
                     res.body.givens.id.should.equal(id)
@@ -237,22 +237,39 @@ describe('/articles Route', () => {
                 })
                 .catch(err => done(err))
         })
+
+        it('should add a downvote for each keyword associated with the article', (done) => {
+            getArticleData(id)
+                .then(res => res.body.keywords)
+                .then(keywords => {
+                    postVote(id, -1)
+                        .then((res) => {
+                            checkKeywords(keywords, res.body.keywords, -1)
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+                .catch(err => done(err))
+        })
+
+        it('should add an upvote for each keyword associated with the article', (done) => {
+            getArticleData(id)
+                .then(res => getKeywords(res.body.keywords))
+                .then(oldKeywords => {
+                    postVote(id, 1)
+                        .then(res => getKeywords(res.body.keywords))
+                        .then((newKeywords) => {
+                            checkKeywords(oldKeywords, newKeywords, 1)
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+                .catch(err => done(err))
+        })
     })
 })
 
 function postVote(id, vote) {
-    return new Promise((resolve, reject) => {
-        chai.request(app)
-            .post('/articles/vote')
-            .send({ id, vote })
-            .end((err, res) => {
-                if (err) reject(err)
-                resolve(res)
-            })
-    })
-}
-
-function postVoteWithErrorExpected(id, vote) {
     return new Promise((resolve, reject) => {
         chai.request(app)
             .post('/articles/vote')
@@ -274,11 +291,38 @@ function getArticleData(id) {
     })
 }
 
+function getKeywords(stringWords) {
+    return new Promise((outerResolve, outerReject) => {
+        const keywords = stringWords.map((word) => {
+            return new Promise((resolve, reject) => {
+                chai.request(app)
+                    .get(`/keywords/${word}`)
+                    .end((err, res) => {
+                        if (err) reject(err)
+                        resolve(res.body)
+                    })
+            })
+        })
+        Promise.all(keywords)
+            .then((words) => {
+                outerResolve(words)
+            })
+            .catch(err => console.log(err))
+    })
+}
+
 function checkReponse(res) {
     res.should.have.status(200)
     res.body.should.be.arrary
     res.body.should.not.be.empty
     res.body.length.should.be.at.most(10)
+}
+
+function checkValidError(res) {
+    res.should.have.status(500)
+    res.body.should.not.be.empty
+    res.body.should.have.property('err')
+    res.body.should.have.property('givens')
 }
 
 function checkArticleProperties(res) {
@@ -299,11 +343,20 @@ function checkSingleArticleProperties(article) {
     article.keywords.should.be.array
 }
 
-function checkValidError(res) {
-    res.should.have.status(500)
-    res.body.should.not.be.empty
-    res.body.should.have.property('err')
-    res.body.should.have.property('givens')
+function checkKeywords(updatedWords, oldWords, vote) {
+    const newKeywordAmount = updatedWords.length
+    const oldKeywordAmount = oldWords.length
+    newKeywordAmount.should.equal(oldKeywordAmount)
+    for (let i = 0; i < newKeywordAmount; i++) {
+        checkKeyword(updatedWords[i], oldWords[i], vote)
+    }
+}
+
+function checkKeyword(newKeyword, oldKeyword, vote) {
+    const newLength = newKeyword.length
+    const oldLength = oldKeyword.length
+    newLength.should.equal(oldLength + 1)
+    newKeyword[newLength - 1].sum.should.equal(oldKeyword[oldLength - 1].sum)
 }
 
 function checkVotesSorted(res) {

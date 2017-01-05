@@ -1,6 +1,7 @@
 const express = require('express')
-const Article = require('../models/ArticleModel')
-const Keyword = require('../models/KeywordModel')
+const bodyParser = require('body-parser')
+const Article = require('../models/ArticleModel.js')
+const incrementKeywords = require('./keyword.js').incrementKeywords
 
 const router = express.Router()
 
@@ -38,30 +39,7 @@ router.post('/vote', (req, res) => {
             return article.save()
         })
         .then((data) => {
-            data.keywords.forEach((word) => {
-                Keyword.findOne({word})
-                    .then((keyword) => {
-                        if (!keyword) throw new Error('Keywords is not array')
-                        let votes = keyword.votes
-                        let len = votes.length
-                        let newVote = {
-                            sum: votes[len - 1].sum + amount,
-                            time: Date.now()
-                        }
-                        votes.push(newVote)
-                        keyword.save()
-                    })
-                    .catch((err) => {
-                        let keyword = new Keyword({
-                            word,
-                            votes: [{
-                                sum: amount,
-                                time: Date.now()
-                            }]
-                        })
-                        keyword.save()
-                    })
-            })
+            incrementKeywords(data.keywords, amount)
             res.send(articleChanged)
         })
         .catch((err) => {

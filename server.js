@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const mongoose = require('mongoose')
 const articleRoute = require('./routes/article.js')
-const keywordRoute = require('./routes/keyword.js')
+const keywordRoute = require('./routes/keyword.js').router
 const fetchArticles = require('./scripts/fetchArticles.js')
 
 const app = express()
