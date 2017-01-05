@@ -198,7 +198,7 @@ describe('/articles Route', () => {
                         })
                         .catch(err => done(err))
                 })
-                .catch(err => console.log(`Error occured ${err}`))
+                .catch(err => done(err))
         })
 
         it('should respond with the updated article when a valid id, and negative vote are supplied', (done) => {
@@ -214,7 +214,28 @@ describe('/articles Route', () => {
                         })
                         .catch(err => done(err))
                 })
-                .catch(err => console.log(`Error occured ${err}`))
+                .catch(err => done(err))
+        })
+
+        it('should respond with an error when an invalid id is provided', (done) => {
+            const fakeId = '5846399f9ba87af2501fb03f'
+            postVoteWithErrorExpected(fakeId, 1)
+                .then((res) => {
+                    checkValidError(res)
+                    res.body.givens.id.should.equal(fakeId)
+                    done()
+                })
+                .catch(err => done(err))
+        })
+
+        it('should respond with an error when an invalid vote is provided', (done) => {
+            postVoteWithErrorExpected(id, 'badVote')
+                .then((res) => {
+                    checkValidError(res)
+                    res.body.givens.id.should.equal(id)
+                    done()
+                })
+                .catch(err => done(err))
         })
     })
 })
@@ -226,6 +247,17 @@ function postVote(id, vote) {
             .send({ id, vote })
             .end((err, res) => {
                 if (err) reject(err)
+                resolve(res)
+            })
+    })
+}
+
+function postVoteWithErrorExpected(id, vote) {
+    return new Promise((resolve, reject) => {
+        chai.request(app)
+            .post('/articles/vote')
+            .send({ id, vote })
+            .end((err, res) => {
                 resolve(res)
             })
     })

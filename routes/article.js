@@ -32,6 +32,7 @@ router.post('/vote', (req, res) => {
     let articleChanged = null
     Article.findById(req.body.id)
         .then((article) => {
+            if (!article) throw new Error('Article not found')
             article.votes += amount
             articleChanged = article
             return article.save()
@@ -40,6 +41,7 @@ router.post('/vote', (req, res) => {
             data.keywords.forEach((word) => {
                 Keyword.findOne({word})
                     .then((keyword) => {
+                        if (!keyword) throw new Error('Keywords is not array')
                         let votes = keyword.votes
                         let len = votes.length
                         let newVote = {
@@ -64,7 +66,7 @@ router.post('/vote', (req, res) => {
         })
         .catch((err) => {
             res.status(500).send({
-                err,
+                err: `Error: ${err}`,
                 givens: req.body
         givens: req.body,
       })
