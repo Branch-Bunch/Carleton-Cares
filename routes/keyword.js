@@ -1,53 +1,53 @@
+'use strict'
+
 const express = require('express')
-const Keyword = require('../models/KeywordModel')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+const Keyword = require('../models/KeywordModel.js')
 
 const router = express.Router()
 
-router.get('/top', (req, res) => {
-  Keyword.find()
-    .lean()
-    .then((wordList) => {
-      const topWords = wordList.reduce((accumulator, word) => {
-        const wordSum = word.votes[word.votes.length - 1].sum
-        const topSum = accumulator.sum
-        if (wordSum > topSum) {
-          return {
-            words: [word],
-            sum: wordSum,
-          }
-        }
-        if (wordSum === topSum) {
-          accumulator.words.push(word)
-        }
-        return accumulator
-      }, {
-        sum: 0,
-        words: [],
-      })
-      res.send(topWords.words)
-    })
-    .catch((err) => {
-      res.status(500).send({
-        err,
-        givens: req.query,
-      })
-    })
-})
-
 router.get('/:word', (req, res) => {
-  const word = req.params.word
-  Keyword.findOne({ word })
-    .lean()
-    .then((keyword) => {
-      if(!keyword) throw new Error('Word not found')
-      res.send([keyword])
-    })
-    .catch((err) => {
-      res.status(500).send({
-        err: err.toString(),
-        givens: req.params,
-      })
+    let word = req.params.word
+    Keyword.find({ word }).lean().then((wordList) => {
+        res.send(wordList[0].votes)
+    }).catch((err) => {
+        res.status(500).send({
+            err: `Keyword not found: ${err}`,
+            givens: req.params
+        })
     })
 })
 
-module.exports = router
+function incrementKeyword(word, amount) {
+    Keyword.findOne({word})
+        .then((keyword) => {
+            if (!keyword) throw new Error('Keywords is not array')
+            let votes = keyword.votes
+            let len = votes.length
+            let newVote = {
+                sum: votes[len - 1].sum + amount,
+                time: Date.now()
+            }
+            votes.push(newVote)
+            keyword.save()
+        })
+        .catch((err) => {
+            let keyword = new Keyword({
+                word,
+                votes: [{
+                    sum: amount,
+                    time: Date.now()
+                }]
+            })
+            keyword.save()
+        })
+}
+
+function incrementKeywords(words, amount) {
+    words.forEach((word) => {
+        incrementKeyword(word, amount)
+    })
+}
+
+module.exports = { router, incrementKeywords }
