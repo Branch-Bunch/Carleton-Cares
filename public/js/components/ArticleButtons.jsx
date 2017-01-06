@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, ButtonToolbar } from 'react-bootstrap'
-import ArticleActions from '../actions/ArticleActions.js'
-import ArticleStore from '../stores/ArticleStore.js'
+import ArticleActions from '../actions/ArticleActions'
+import ArticleStore from '../stores/ArticleStore'
 
 export default class ArticleButtons extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ export default class ArticleButtons extends React.Component {
   callVote(vote) {
     if (!this.canVote()) return
     ArticleActions.postVote(vote, this.props.id)
-            .then(() => ArticleActions.fetchArticles(ArticleStore.getSort()))
+      .then(() => ArticleActions.fetchArticles(ArticleStore.getSort()))
   }
 
   canVote() {
@@ -33,11 +33,6 @@ export default class ArticleButtons extends React.Component {
     this.setState(prevState => ({
       clicked: !prevState.clicked,
     }))
-  }
-
-    // Temp function
-  notReady() {
-    alert('Graphs aren\'t avaiable yet!')
   }
 
   render() {
@@ -58,10 +53,14 @@ export default class ArticleButtons extends React.Component {
         >-</Button>
 
         <Button
-          onClick={this.notReady}
+          onClick={() => alert('Graphs aren\'t avaiable yet!')}
           bsSize="small"
         >Show Trend</Button>
       </ButtonToolbar>
     )
   }
+}
+
+ArticleButtons.propTypes = {
+  id: React.PropTypes.string.isRequired,
 }

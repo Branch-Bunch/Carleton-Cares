@@ -1,10 +1,10 @@
 import React from 'react'
 import { Button, ButtonGroup } from 'react-bootstrap'
-import ArticleActions from '../actions/ArticleActions.js'
+import ArticleActions from '../actions/ArticleActions'
 
 export default class SortingBar extends React.Component {
 
-  changeSort(sort) {
+  static changeSort(sort) {
     ArticleActions.changeSort(sort)
     ArticleActions.fetchArticles(sort)
   }

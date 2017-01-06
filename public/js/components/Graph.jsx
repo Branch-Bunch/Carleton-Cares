@@ -1,5 +1,4 @@
 import React from 'react'
-import { render } from 'react-dom'
 import { Chart } from 'react-google-charts'
 
 export default class Graph extends React.Component {

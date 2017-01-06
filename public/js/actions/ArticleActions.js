@@ -1,5 +1,5 @@
-import dispatcher from '../dispatcher.js'
-import ActionTypes from '../constants/ActionTypes.js'
+import dispatcher from '../dispatcher'
+import ActionTypes from '../constants/ActionTypes'
 
 export default class ArticleActions {
 
@@ -27,18 +27,15 @@ export default class ArticleActions {
       }
 
       fetch(fetchURL)
-                .then(res => res.json())
-                .then((articles) => {
-                  dispatcher.dispatch({
-                    articles,
-                    type: ActionTypes.UPDATE_ARTICLES,
-                  })
-                  resolve()
-                })
-                .catch((err) => {
-                  console.log('Error fetching articles', err)
-                  reject(err)
-                })
+        .then(res => res.json())
+        .then((articles) => {
+          dispatcher.dispatch({
+            articles,
+            type: ActionTypes.UPDATE_ARTICLES,
+          })
+          resolve()
+        })
+        .catch(err => reject(err))
     })
   }
 
@@ -51,20 +48,14 @@ export default class ArticleActions {
 
   static postVote(vote, id) {
     return new Promise((resolve, reject) => {
+      // TODO: Could add a dispatch here if need post vote info
       fetch('articles/vote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          vote,
-          id,
-        }),
+        body: JSON.stringify({ vote, id }),
       })
-            // TODO: Could add a dispatch here if need post vote info
-                .then(res => resolve(res.json()))
-                .catch((err) => {
-                  console.log('Vote failed to respond', err)
-                  reject(err)
-                })
+        .then(res => resolve(res.json()))
+        .catch(err => reject(err))
     })
   }
 }
