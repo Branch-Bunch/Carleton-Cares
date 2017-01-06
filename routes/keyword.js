@@ -1,9 +1,5 @@
-'use strict'
-
 const express = require('express')
-const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
-const Keyword = require('../models/KeywordModel.js')
+const Keyword = require('../models/KeywordModel')
 
 const router = express.Router()
 
@@ -39,17 +35,15 @@ router.get('/top', (req, res) => {
 })
 
 router.get('/:word', (req, res) => {
-    let word = req.params.word
-    Keyword.find({word: word})
+  const word = req.params.word
+  Keyword.find({ word })
     .lean()
-    .then((wordList) => {
-        res.send(wordList[0].votes)
-    })
+    .then(words => res.send(words[0].votes))
     .catch((err) => {
-        res.status(500).send({
-            err,
-            givens: req.params
-        })
+      res.status(500).send({
+        err: `Keyword not found: ${err}`,
+        givens: req.params,
+      })
     })
 })
 
