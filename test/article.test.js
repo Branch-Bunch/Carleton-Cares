@@ -50,9 +50,9 @@ describe('/articles Route', () => {
       chai.request(app)
                 .get(`/articles/${fakeId}`)
                 .end((err, res) => {
-                    checkValidError(res)
-                    res.body.givens.id.should.equal(fakeId)
-                    done()
+                  checkValidError(res)
+                  res.body.givens.id.should.equal(fakeId)
+                  done()
                 })
     })
 
@@ -61,9 +61,9 @@ describe('/articles Route', () => {
       chai.request(app)
                 .get(`/articles/${invalidId}`)
                 .end((err, res) => {
-                    checkValidError(res)
-                    res.body.givens.id.should.equal(invalidId)
-                    done()
+                  checkValidError(res)
+                  res.body.givens.id.should.equal(invalidId)
+                  done()
                 })
     })
   })
@@ -209,10 +209,10 @@ function checkSingleArticleProperties(article) {
 }
 
 function checkValidError(res) {
-    res.should.have.status(500)
-    res.body.should.not.be.empty
-    res.body.should.have.property('err')
-    res.body.should.have.property('givens')
+  res.should.have.status(500)
+  res.body.should.not.be.empty
+  res.body.should.have.property('err')
+  res.body.should.have.property('givens')
 }
 
 function checkVotesSorted(res) {

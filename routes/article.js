@@ -8,15 +8,15 @@ const Keyword = require('../models/KeywordModel.js')
 const router = express.Router()
 
 router.post('/vote', (req, res) => {
-    let amount = getAmount(req.body.vote)
-    console.log(`votes modified by ${amount} for ${req.body.id}`)
-    if (amount === 0) {
-        res.status(500).send({
-            err: "Invalid value for vote",
-            givens: req.body
-        })
-        return
-    }
+  const amount = getAmount(req.body.vote)
+  console.log(`votes modified by ${amount} for ${req.body.id}`)
+  if (amount === 0) {
+    res.status(500).send({
+      err: 'Invalid value for vote',
+      givens: req.body,
+    })
+    return
+  }
 
   let articleChanged = null
   Article.findById(req.body.id)
@@ -57,10 +57,10 @@ router.post('/vote', (req, res) => {
           res.send(articleChanged)
         })
         .catch((err) => {
-            res.status(500).send({
-                err,
-                givens: req.body
-            })
+          res.status(500).send({
+            err,
+            givens: req.body,
+          })
         })
 })
 
@@ -81,10 +81,10 @@ router.get('/top', (req, res) => {
   getNextArticles(findParams, sortParams)
         .then(articles => res.send(articles))
         .catch((err) => {
-            res.status(500).send({
-                err: `Articles weren't found: ${err}`,
-                givens: req.query
-            })
+          res.status(500).send({
+            err: `Articles weren't found: ${err}`,
+            givens: req.query,
+          })
         })
 })
 
@@ -100,10 +100,10 @@ router.get('/new', (req, res) => {
   getNextArticles(findParams, sortParams)
         .then(articles => res.send(articles))
         .catch((err) => {
-            res.status(500).send({
-                err: `Newest articles weren't found: ${err}`,
-                givens: req.query
-            })
+          res.status(500).send({
+            err: `Newest articles weren't found: ${err}`,
+            givens: req.query,
+          })
         })
 })
 
@@ -114,10 +114,10 @@ router.get('/:id', (req, res) => {
           res.send(article)
         })
         .catch((err) => {
-            res.status(500).send({
-                err,
-                givens: req.params
-            })
+          res.status(500).send({
+            err,
+            givens: req.params,
+          })
         })
 })
 

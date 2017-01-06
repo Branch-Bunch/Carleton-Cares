@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
-import dispatcher from '../dispatcher.js'
-import ActionTypes from '../constants/ActionTypes.js'
+import dispatcher from '../dispatcher'
+import ActionTypes from '../constants/ActionTypes'
 
 class ArticleStore extends EventEmitter {
   constructor() {

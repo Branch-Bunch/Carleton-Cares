@@ -1,9 +1,9 @@
 import React from 'react'
 import { Grid, Row, Col } from 'react-bootstrap'
-import Article from './Article.js'
-import SortingBar from './SortingBar.js'
-import ArticleStore from '../stores/ArticleStore.js'
-import ArticleActions from '../actions/ArticleActions.js'
+import Article from './Article'
+import SortingBar from './SortingBar'
+import ArticleStore from '../stores/ArticleStore'
+import ArticleActions from '../actions/ArticleActions'
 
 export default class ArticleTable extends React.Component {
   constructor(props) {
@@ -46,9 +46,9 @@ export default class ArticleTable extends React.Component {
         key={article._id}
         index={index + 1}
       />
-            ))
+    ))
 
-        // TODO: Find a better way to center the SortingBar
+    // TODO: Find a better way to center the SortingBar
     return (
       <Grid>
         <Row>
