@@ -9,8 +9,8 @@ const router = express.Router()
 
 router.get('/:word', (req, res) => {
     let word = req.params.word
-    Keyword.find({ word }).lean().then((wordList) => {
-        res.send(wordList[0].votes)
+    Keyword.findOne({ word }).lean().then((foundWord) => {
+        res.send(foundWord)
     }).catch((err) => {
         res.status(500).send({
             err: `Keyword not found: ${err}`,
@@ -20,7 +20,7 @@ router.get('/:word', (req, res) => {
 })
 
 function incrementKeyword(word, amount) {
-    Keyword.findOne({word})
+    Keyword.findOne({ word })
         .then((keyword) => {
             if (!keyword) throw new Error('Keywords is not array')
             let votes = keyword.votes
