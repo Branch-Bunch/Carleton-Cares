@@ -1,9 +1,10 @@
-const webpack = require('webpack')
-
 module.exports = {
-  entry: './public/js/index.js',
+  entry: './public/js/index',
   output: {
     path: __dirname, filename: './public/build/bundle.js',
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
   },
   devServer: {
     contentBase: './public/',
