@@ -1,6 +1,6 @@
 const express = require('express')
-const Article = require('../models/ArticleModel.js')
-const Keyword = require('../models/KeywordModel.js')
+const Article = require('../models/ArticleModel')
+const Keyword = require('../models/KeywordModel')
 
 const router = express.Router()
 
