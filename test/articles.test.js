@@ -184,98 +184,67 @@ describe('/articles Route', () => {
 
     describe('POST /articles/vote', () => {
         const id = '5846399f9ba87af2501fb035'
+        const fakeId = '5846399f9ba87af2501fb03f'
 
         it('should respond with the updated article when a valid id, and positive vote are supplied', (done) => {
             getArticleData(id)
-                .then(res => res.body.votes + 1)
-                .then(expectedVotes => {
-                    postVote(id, 1)
-                        .then((res) => {
-                            checkSingleArticleProperties(res.body)
-                            res.body._id.should.equal(id)
-                            res.body.votes.should.equal(expectedVotes)
-                            done()
-                        })
-                        .catch(err => done(err))
+                .then(articleResponse1 => articleResponse1.body.votes + 1)
+                .then(expectedRaisedVote => postVote(id, 1, expectedRaisedVote))
+                .then((voteResponse) => {
+                    checkSingleArticleProperties(voteResponse.res.body)
+                    voteResponse.res.body._id.should.equal(id)
+                    voteResponse.res.body.votes.should.equal(voteResponse.expected)
                 })
-                .catch(err => done(err))
-        })
 
-        it('should respond with the updated article when a valid id, and negative vote are supplied', (done) => {
-            getArticleData(id)
-                .then(res => res.body.votes - 1)
-                .then(expectedVotes => {
-                    postVote(id, -1)
-                        .then((res) => {
-                            checkSingleArticleProperties(res.body)
-                            res.body._id.should.equal(id)
-                            res.body.votes.should.equal(expectedVotes)
-                            done()
-                        })
-                        .catch(err => done(err))
+                .then(() => getArticleData(id))
+                .then(articleResponse2 => articleResponse2.body.votes - 1)
+                .then(expectedLoweredVote => postVote(id, -1, expectedLoweredVote))
+                .then((voteResponse) => {
+                    checkSingleArticleProperties(voteResponse.res.body)
+                    voteResponse.res.body._id.should.equal(id)
+                    voteResponse.res.body.votes.should.equal(voteResponse.expected)
                 })
-                .catch(err => done(err))
-        })
 
-        it('should respond with an error when an invalid id is provided', (done) => {
-            const fakeId = '5846399f9ba87af2501fb03f'
-            postVote(fakeId, 1)
-                .then((res) => {
-                    checkValidError(res)
-                    res.body.givens.id.should.equal(fakeId)
-                    done()
+                .then(() => postVote(fakeId, 1, 'error'))
+                .then((errorResponse) => {
+                    checkValidError(errorResponse.res)
+                    errorResponse.res.body.givens.id.should.equal(fakeId)
                 })
-                .catch(err => done(err))
-        })
 
-        it('should respond with an error when an invalid vote is provided', (done) => {
-            postVote(id, 'badVote')
-                .then((res) => {
-                    checkValidError(res)
-                    res.body.givens.id.should.equal(id)
-                    done()
+                .then(() => postVote(id, 'badVote', 'error'))
+                .then((errorResponse) => {
+                    checkValidError(errorResponse.res)
+                    errorResponse.res.body.givens.id.should.equal(id)
                 })
-                .catch(err => done(err))
-        })
 
-        it('should add a downvote for each keyword associated with the article', (done) => {
-            getArticleData(id)
-                .then(res => res.body.keywords)
-                .then(keywords => {
-                    postVote(id, -1)
-                        .then((res) => {
-                            checkKeywords(keywords, res.body.keywords, -1)
-                            done()
-                        })
-                        .catch(err => done(err))
-                })
-                .catch(err => done(err))
-        })
-
-        it('should add an upvote for each keyword associated with the article', (done) => {
-            getArticleData(id)
+                .then(() => getArticleData(id))
                 .then(res => getKeywords(res.body.keywords))
-                .then(oldKeywords => {
-                    postVote(id, 1)
-                        .then(res => getKeywords(res.body.keywords))
-                        .then((newKeywords) => {
-                            checkKeywords(oldKeywords, newKeywords, 1)
-                            done()
-                        })
-                        .catch(err => done(err))
+                .then(keywords => postVote(id, -1, keywords))
+                .then(voteResponse => getKeywordData(voteResponse, voteResponse.res.body.keywords))
+                .then((keywordResponse) => {
+                    checkKeywords(keywordResponse.voteResponse.expected, keywordResponse.newKeywords, -1)
+                })
+
+                .then(() => getArticleData(id))
+                .then(res => getKeywords(res.body.keywords))
+                .then(oldKeywords => postVote(id, 1, oldKeywords))
+                .then(voteResponse => getKeywordData(voteResponse, voteResponse.res.body.keywords))
+                .then((keywordResponse) => {
+                    checkKeywords(keywordResponse.voteResponse.expected, keywordResponse.newKeywords, 1)
+                    done()
                 })
                 .catch(err => done(err))
         })
     })
 })
 
-function postVote(id, vote) {
+function postVote(id, vote, expected) {
     return new Promise((resolve, reject) => {
         chai.request(app)
             .post('/articles/vote')
             .send({ id, vote })
             .end((err, res) => {
-                resolve(res)
+                resolve({res, expected})
             })
     })
 }
@@ -288,6 +257,12 @@ function getArticleData(id) {
                 if (err) reject(err)
                 resolve(res)
             })
+    })
+}
+
+function getKeywordData(voteResponse, newKeywordsArray) {
+    return new Promise((resolve, reject) => {
+        getKeywords(newKeywordsArray).then(newKeywords => resolve({ voteResponse, newKeywords, })) 
     })
 }
 
@@ -343,20 +318,22 @@ function checkSingleArticleProperties(article) {
     article.keywords.should.be.array
 }
 
-function checkKeywords(updatedWords, oldWords, vote) {
+function checkKeywords(oldWords, updatedWords, vote) {
     const newKeywordAmount = updatedWords.length
     const oldKeywordAmount = oldWords.length
     newKeywordAmount.should.equal(oldKeywordAmount)
-    for (let i = 0; i < newKeywordAmount; i++) {
-        checkKeyword(updatedWords[i], oldWords[i], vote)
-    }
+    updatedWords.forEach((word, index) => {
+        checkKeyword(oldWords[index], word, vote)
+    })
 }
 
-function checkKeyword(newKeyword, oldKeyword, vote) {
-    const newLength = newKeyword.length
-    const oldLength = oldKeyword.length
+function checkKeyword(oldKeyword, newKeyword, vote) {
+    const newLength = newKeyword.votes.length
+    const oldLength = oldKeyword.votes.length
     newLength.should.equal(oldLength + 1)
-    newKeyword[newLength - 1].sum.should.equal(oldKeyword[oldLength - 1].sum)
+    const latest = newKeyword.votes[newLength - 1].sum
+    const older = oldKeyword.votes[oldLength - 1].sum
+    latest.should.equal(older - vote)
 }
 
 function checkVotesSorted(res) {
