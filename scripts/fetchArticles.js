@@ -8,17 +8,22 @@ const Article = require('../models/ArticleModel.js')
 const REFRESH = 3600000
 
 function sanitize(string) {
-  // formats the string to lowercase, and removes all punctuation
   const newString = string.toLowerCase()
+  // Removes all punctuation
   return newString.replace(/[^0-9a-z ]/g, '')
 }
 
 function getPhrases(article) {
   const words = []
-  retext().use(retextkeywords).process(
-    `${article.title} ${article.description}`, (err, file) => {
+  retext()
+    .use(retextkeywords)
+    .process(`${article.title} ${article.description}`, (err, file) => {
       file.data.keyphrases.forEach((phrase) => {
-        words.push(sanitize(phrase.matches[0].nodes.map(nlcstToString).join('')))
+        words.push(
+          sanitize(phrase.matches[0].nodes
+            .map(nlcstToString)
+            .join('')),
+        )
       })
     })
   return words
@@ -31,21 +36,16 @@ function updateNews() {
       headlines.forEach((old) => {
         Article.findOne({ url: old.url })
           .then((article) => {
-            if (!article) {
-              const newArticle = new Article(old)
-              newArticle.keywords = getPhrases(article)
-              newArticle.votes = 0
-              newArticle.save()
-            }
+            if (article) return
+            const newArticle = new Article(old)
+            newArticle.keywords = getPhrases(article)
+            newArticle.votes = 0
+            newArticle.save()
           })
-          .catch((err) => {
-            console.log('Error finding or saving article', err)
-          })
+          .catch(err => err)
       })
     })
-    .catch((err) => {
-      console.log(err)
-    })
+    .catch(err => err)
 }
 
 module.exports.startFetchCycle = () => {
@@ -53,4 +53,3 @@ module.exports.startFetchCycle = () => {
     updateNews()
   }, REFRESH)
 }
-
