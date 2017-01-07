@@ -28,15 +28,11 @@ export default class ArticleTable extends React.Component {
   }
 
   setArticles() {
-    this.setState({
-      articles: ArticleStore.getArticles(),
-    })
+    this.setState({ articles: ArticleStore.getArticles() })
   }
 
   setSort() {
-    this.setState({
-      sort: ArticleStore.getSort(),
-    })
+    this.setState({ sort: ArticleStore.getSort() })
   }
 
   render() {

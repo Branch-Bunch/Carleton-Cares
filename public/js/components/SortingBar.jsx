@@ -13,12 +13,12 @@ export default class SortingBar extends React.Component {
     return (
       <ButtonGroup>
         <Button
-          onClick={() => this.changeSort('NEW')}
+          onClick={() => SortingBar.changeSort('NEW')}
           bsStyle="info"
           bsSize="small"
         >Newest</Button>
         <Button
-          onClick={() => this.changeSort('TOP')}
+          onClick={() => SortingBar.changeSort('TOP')}
           bsStyle="info"
           bsSize="small"
         >Top</Button>

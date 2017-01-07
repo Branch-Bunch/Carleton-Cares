@@ -33,7 +33,7 @@ export default class ArticleActions {
             articles,
             type: ActionTypes.UPDATE_ARTICLES,
           })
-          resolve()
+          resolve(articles)
         })
         .catch(err => reject(err))
     })
@@ -54,7 +54,8 @@ export default class ArticleActions {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vote, id }),
       })
-        .then(res => resolve(res.json()))
+        .then(res => res.json())
+        .then(data => resolve(data))
         .catch(err => reject(err))
     })
   }

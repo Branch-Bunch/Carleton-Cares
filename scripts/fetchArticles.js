@@ -2,7 +2,7 @@ const request = require('request-promise')
 const retext = require('retext')
 const retextkeywords = require('retext-keywords')
 const nlcstToString = require('nlcst-to-string')
-const Article = require('../models/ArticleModel.js')
+const Article = require('../models/ArticleModel')
 
 // 3 600 000 is 1 hour
 const REFRESH = 3600000
@@ -19,11 +19,10 @@ function getPhrases(article) {
     .use(retextkeywords)
     .process(`${article.title} ${article.description}`, (err, file) => {
       file.data.keyphrases.forEach((phrase) => {
-        words.push(
-          sanitize(phrase.matches[0].nodes
-            .map(nlcstToString)
-            .join('')),
-        )
+        const newPhrase = phrase.matches[0].nodes
+          .map(nlcstToString)
+          .join('')
+        words.push(sanitize(newPhrase))
       })
     })
   return words
