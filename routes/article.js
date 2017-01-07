@@ -6,8 +6,7 @@ const router = express.Router()
 
 function getNextArticles(findParams, sortParams) {
   return new Promise((resolve, reject) => {
-    Article
-      .find(findParams)
+    Article.find(findParams)
       .sort(sortParams)
       .limit(10)
       .lean()

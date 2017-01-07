@@ -4,8 +4,7 @@ const Keyword = require('../models/KeywordModel')
 const router = express.Router()
 
 router.get('/top', (req, res) => {
-  Keyword
-    .find()
+  Keyword.find()
     .lean()
     .then((wordList) => {
       const topWords = wordList.reduce((accumulator, word) => {
