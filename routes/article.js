@@ -65,7 +65,7 @@ router.post('/vote', (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        err,
+        err: err.toString(),
         givens: req.body,
       })
     })
@@ -123,7 +123,7 @@ router.get('/:id', (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        err,
+        err: err.toString(),
         givens: req.params,
       })
     })
