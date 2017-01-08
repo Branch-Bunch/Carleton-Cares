@@ -36,10 +36,8 @@ export default class ArticleButtons extends React.Component {
         }))
     }
 
-    // Temp function
-    notReady() {
-        console.log('inside buttons', this.props.id)
-        GraphActions.updateGraph(this.props.id)
+    updateGraph() {
+        GraphActions.graphArticle(this.props.id)
     }
 
     render() {
@@ -60,7 +58,7 @@ export default class ArticleButtons extends React.Component {
                 >-</Button>
 
                 <Button
-                    onClick={this.notReady.bind(this)}
+                    onClick={this.updateGraph.bind(this)}
                     bsSize="small"
                 >Show Trend</Button>
             </ButtonToolbar>
