@@ -2,6 +2,7 @@ import React from 'react'
 import {render} from 'react-dom'
 import {Chart} from 'react-google-charts'
 import GraphStore from '../stores/GraphStore'
+import GraphActions from '../actions/GraphActions'
 
 export default class Graph extends React.Component {
     constructor(props) {
@@ -17,6 +18,7 @@ export default class Graph extends React.Component {
                 dataPoints: GraphStore.getDataPoints()
             })
         })
+        GraphActions.graphTop()
     }
 
 

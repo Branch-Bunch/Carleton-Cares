@@ -5,7 +5,7 @@ import ActionTypes from '../constants/ActionTypes.js'
 class GraphStore extends EventEmitter {
     constructor() {
         super()
-        this.points = [['time', 'fake data'], [0,0], [2,1]]
+        this.points
     }
 
     setPoints(dataPoints) {
@@ -19,7 +19,6 @@ class GraphStore extends EventEmitter {
     }
 
     handleAction(action){
-        console.log(action)
         switch (action.type) {
             case 'UPDATE_GRAPH':
                 this.setPoints(action.dataPoints)
@@ -30,5 +29,4 @@ class GraphStore extends EventEmitter {
 
 const graphStore = new GraphStore()
 dispatcher.register(graphStore.handleAction.bind(graphStore))
-window.dispatcher = dispatcher
 export default graphStore
