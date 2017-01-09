@@ -30,8 +30,8 @@ export default class GraphActions{
                 })
             })
             .catch(err => {
-                console.log('Error fetching articles', err)
-                reject(err)
+                console.log('Error updating graph', err)
+                // TODO: do somthing with error
             })
     }
 }

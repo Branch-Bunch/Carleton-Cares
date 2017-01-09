@@ -28,7 +28,7 @@ export default class Graph extends React.Component {
                 <Chart
                   chartType="AreaChart"
                   data={this.state.dataPoints}
-				  options={{}}
+				          options={{}}
                   graph_id="ScatterChart"
                   width="100%"
                   height="400px"

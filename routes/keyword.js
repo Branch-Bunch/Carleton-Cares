@@ -43,8 +43,14 @@ router.get('/:word', (req, res) => {
     Keyword.find({word: word})
     .lean()
     .then((wordList) => {
-        res.send(wordList)
-    })
+		if(wordList.length === 0){
+			res.status(500).send({
+	            err: 'word not found',
+	            givens: req.params
+	        })
+		}
+		else res.send(wordList)
+	})
     .catch((err) => {
         res.status(500).send({
             err,
