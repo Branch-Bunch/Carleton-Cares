@@ -185,52 +185,48 @@ describe('/articles Route', () => {
     describe('POST /articles/vote', () => {
         const id = '5846399f9ba87af2501fb035'
         const fakeId = '5846399f9ba87af2501fb03f'
+        let test = getArticleData(id)
 
-        it('should respond with the updated article when a valid id, and positive vote are supplied', (done) => {
-            getArticleData(id)
-                .then(articleResponse1 => articleResponse1.body.votes + 1)
+        it('should respond with the changed information when a valid positive vote is supplied', (done) => {
+            test.then(articleResponse1 => articleResponse1.body.votes + 1)
                 .then(expectedRaisedVote => postVote(id, 1, expectedRaisedVote))
                 .then((voteResponse) => {
                     checkSingleArticleProperties(voteResponse.res.body)
                     voteResponse.res.body._id.should.equal(id)
                     voteResponse.res.body.votes.should.equal(voteResponse.expected)
+                    done()
                 })
+                .catch(err => done(err))
+        })
 
-                .then(() => getArticleData(id))
+        it('should respond with the changed information when a valid negative vote is supplied', (done) => {
+            test.then(() => getArticleData(id))
                 .then(articleResponse2 => articleResponse2.body.votes - 1)
                 .then(expectedLoweredVote => postVote(id, -1, expectedLoweredVote))
                 .then((voteResponse) => {
                     checkSingleArticleProperties(voteResponse.res.body)
                     voteResponse.res.body._id.should.equal(id)
                     voteResponse.res.body.votes.should.equal(voteResponse.expected)
+                    done()
                 })
+                .catch(err => done(err))
+        })
 
-                .then(() => postVote(fakeId, 1, 'error'))
+        it('should respond with an error when an invalid id is supplied', (done) => {
+            test.then(() => postVote(fakeId, 1, 'error'))
                 .then((errorResponse) => {
                     checkValidError(errorResponse.res)
                     errorResponse.res.body.givens.id.should.equal(fakeId)
+                    done()
                 })
+                .catch(err => done(err))
+        })
 
-                .then(() => postVote(id, 'badVote', 'error'))
+        it('should respond with an error when an invalid vote is supplied', (done) => {
+            test.then(() => postVote(id, 'badVote', 'error'))
                 .then((errorResponse) => {
                     checkValidError(errorResponse.res)
                     errorResponse.res.body.givens.id.should.equal(id)
-                })
-
-                .then(() => getArticleData(id))
-                .then(res => getKeywords(res.body.keywords))
-                .then(keywords => postVote(id, -1, keywords))
-                .then(voteResponse => getKeywordData(voteResponse, voteResponse.res.body.keywords))
-                .then((keywordResponse) => {
-                    checkKeywords(keywordResponse.voteResponse.expected, keywordResponse.newKeywords, -1)
-                })
-
-                .then(() => getArticleData(id))
-                .then(res => getKeywords(res.body.keywords))
-                .then(oldKeywords => postVote(id, 1, oldKeywords))
-                .then(voteResponse => getKeywordData(voteResponse, voteResponse.res.body.keywords))
-                .then((keywordResponse) => {
-                    checkKeywords(keywordResponse.voteResponse.expected, keywordResponse.newKeywords, 1)
                     done()
                 })
                 .catch(err => done(err))
@@ -330,6 +326,8 @@ function checkKeywords(oldWords, updatedWords, vote) {
 function checkKeyword(oldKeyword, newKeyword, vote) {
     const newLength = newKeyword.votes.length
     const oldLength = oldKeyword.votes.length
+    newKeyword.word.should.equal(oldKeyword.word)
+    newKeyword.votes.should.be.an('array')
     newLength.should.equal(oldLength + 1)
     const latest = newKeyword.votes[newLength - 1].sum
     const older = oldKeyword.votes[oldLength - 1].sum
