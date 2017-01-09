@@ -5,9 +5,9 @@ const app = require('../server.js')
 chai.should()
 chai.use(chaiHttp)
 
-function checkReponse(res) {
+function checkResponse(res) {
   res.should.have.status(200)
-  res.body.should.be.arrary
+  res.body.should.be.an('array')
   res.body.should.not.be.empty
   res.body.length.should.be.at.most(10)
 }
@@ -45,10 +45,10 @@ function checkVotesSorted(res) {
 
 function checkDateSorted(res) {
   const articles = res.body
-  const sorted = articles
-    .every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
+  const sorted = articles.every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
   sorted.should.be.true
 }
+
 
 describe('/articles Route', () => {
   const date = new Date()
@@ -62,7 +62,7 @@ describe('/articles Route', () => {
       chai.request(app)
         .get('/articles/top')
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })
@@ -119,7 +119,7 @@ describe('/articles Route', () => {
         .get('/articles/top')
         .query({ lastVote, lastDate })
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })
@@ -164,7 +164,7 @@ describe('/articles Route', () => {
       chai.request(app)
         .get('/articles/new')
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })
@@ -186,7 +186,7 @@ describe('/articles Route', () => {
         .get('/articles/new')
         .query({ lastDate })
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })

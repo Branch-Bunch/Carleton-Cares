@@ -5,7 +5,7 @@ import ActionTypes from '../constants/ActionTypes.js'
 class GraphStore extends EventEmitter {
     constructor() {
         super()
-        this.points
+        this.points = [['TempData', 'TempData'], [1,1]]
     }
 
     setPoints(dataPoints) {
