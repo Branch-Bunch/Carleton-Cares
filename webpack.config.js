@@ -1,8 +1,13 @@
+const webpack = require('webpack')
+
+const debug = process.env.NODE_ENV !== 'production'
+
 module.exports = {
   entry: './public/js/index',
   output: {
     path: __dirname, filename: './public/build/bundle.js',
   },
+  devtool: debug ? 'inline-sourcemap' : null,
   resolve: {
     extensions: ['', '.js', '.jsx'],
   },
@@ -25,4 +30,9 @@ module.exports = {
       },
     }],
   },
+  plugins: debug ? [] : [
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
+  ],
 }
