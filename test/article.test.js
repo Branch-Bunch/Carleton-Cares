@@ -45,7 +45,8 @@ function checkVotesSorted(res) {
 
 function checkDateSorted(res) {
   const articles = res.body
-  const sorted = articles.every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
+  const sorted = articles
+    .every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
   sorted.should.be.true
 }
 
