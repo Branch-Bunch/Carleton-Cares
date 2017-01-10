@@ -20,34 +20,46 @@ router.get('/:word', (req, res) => {
 })
 
 function incrementKeyword(word, amount) {
-    Keyword.findOne({ word })
-        .then((keyword) => {
-            if (!keyword) throw new Error('Keywords is not array')
-            let votes = keyword.votes
-            let len = votes.length
-            let newVote = {
-                sum: votes[len - 1].sum + amount,
-                time: Date.now()
-            }
-            votes.push(newVote)
-            keyword.save()
-        })
-        .catch((err) => {
-            let keyword = new Keyword({
-                word,
-                votes: [{
-                    sum: amount,
+    return new Promise((resolve, reject) => {
+        Keyword.findOne({ word })
+            .then((keyword) => {
+                if (!keyword) throw new Error('Keywords is not array')
+                let votes = keyword.votes
+                let len = votes.length
+                let oldSum = keyword.votes[len - 1].sum
+                let newSum = oldSum + amount
+
+                let newVote = {
+                    sum: newSum,
                     time: Date.now()
-                }]
+                }
+                votes.push(newVote)
+                keyword.save()
+                resolve({ word: keyword.word, newSum, oldSum })
             })
-            keyword.save()
-        })
+            .catch((err) => {
+                let oldSum = 0
+                let newSum = oldSum + amount
+                let newVote = {
+                        sum: newSum,
+                        time: Date.now()
+                }
+
+                let keyword = new Keyword({
+                    word,
+                    votes: [newVote]
+                })
+                keyword.save()
+                resolve({ word: keyword.word, newSum, oldSum })
+            })
+    })
 }
 
 function incrementKeywords(words, amount) {
-    words.forEach((word) => {
-        incrementKeyword(word, amount)
+    words.forEach((word, i) => {
+        words[i] = incrementKeyword(word, amount)
     })
+    return words
 }
 
 module.exports = { router, incrementKeywords }

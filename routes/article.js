@@ -30,17 +30,22 @@ router.post('/vote', (req, res) => {
         return
     }
 
-    let articleChanged = null
     Article.findById(req.body.id)
         .then((article) => {
             if (!article) throw new Error('Article not found')
             article.votes += amount
-            articleChanged = article
             return article.save()
         })
         .then((data) => {
-            incrementKeywords(data.keywords, amount)
-            res.send(articleChanged)
+            Promise.all(incrementKeywords(data.keywords, amount))
+                .then((keywords) => {
+                    res.send({
+                        votes: data.votes,
+                        id: data.id,
+                        keywords
+                    })
+                })
+                .catch(err =>  new Error('Keywords were not able to be modified'))
         })
         .catch((err) => {
             res.status(500).send({

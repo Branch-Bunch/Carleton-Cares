@@ -188,12 +188,13 @@ describe('/articles Route', () => {
         let test = getArticleData(id)
 
         it('should respond with the changed information when a valid positive vote is supplied', (done) => {
-            test.then(articleResponse1 => articleResponse1.body.votes + 1)
-                .then(expectedRaisedVote => postVote(id, 1, expectedRaisedVote))
+            test.then(articleResponse => articleResponse.body)
+                .then(oldArticle => postVote(id, 1, oldArticle))
                 .then((voteResponse) => {
-                    checkSingleArticleProperties(voteResponse.res.body)
-                    voteResponse.res.body._id.should.equal(id)
-                    voteResponse.res.body.votes.should.equal(voteResponse.expected)
+                    checkVoteResponse(voteResponse.res, voteResponse.old)
+                    checkKeywords(voteResponse.res.body.keywords, 1)
+                    voteResponse.res.body.id.should.equal(id)
+                    voteResponse.res.body.votes.should.equal(voteResponse.old.votes + 1)
                     done()
                 })
                 .catch(err => done(err))
@@ -201,12 +202,13 @@ describe('/articles Route', () => {
 
         it('should respond with the changed information when a valid negative vote is supplied', (done) => {
             test.then(() => getArticleData(id))
-                .then(articleResponse2 => articleResponse2.body.votes - 1)
-                .then(expectedLoweredVote => postVote(id, -1, expectedLoweredVote))
+                .then(articleResponse => articleResponse.body)
+                .then(oldArticle => postVote(id, -1, oldArticle))
                 .then((voteResponse) => {
-                    checkSingleArticleProperties(voteResponse.res.body)
-                    voteResponse.res.body._id.should.equal(id)
-                    voteResponse.res.body.votes.should.equal(voteResponse.expected)
+                    checkVoteResponse(voteResponse.res, voteResponse.old)
+                    checkKeywords(voteResponse.res.body.keywords, -1)
+                    voteResponse.res.body.id.should.equal(id)
+                    voteResponse.res.body.votes.should.equal(voteResponse.old.votes - 1)
                     done()
                 })
                 .catch(err => done(err))
@@ -234,13 +236,13 @@ describe('/articles Route', () => {
     })
 })
 
-function postVote(id, vote, expected) {
+function postVote(id, vote, old) {
     return new Promise((resolve, reject) => {
         chai.request(app)
             .post('/articles/vote')
             .send({ id, vote })
             .end((err, res) => {
-                resolve({res, expected})
+                resolve({res, old})
             })
     })
 }
@@ -253,12 +255,6 @@ function getArticleData(id) {
                 if (err) reject(err)
                 resolve(res)
             })
-    })
-}
-
-function getKeywordData(voteResponse, newKeywordsArray) {
-    return new Promise((resolve, reject) => {
-        getKeywords(newKeywordsArray).then(newKeywords => resolve({ voteResponse, newKeywords, })) 
     })
 }
 
@@ -296,6 +292,13 @@ function checkValidError(res) {
     res.body.should.have.property('givens')
 }
 
+function checkVoteResponse(res, old) {
+    res.should.have.status(200)
+    res.body.should.have.property('keywords').be.an('array')
+    res.body.should.have.property('id').be.a('string')
+    res.body.should.have.property('votes').be.a('number')
+}
+
 function checkArticleProperties(res) {
     res.body.forEach((article) => {
         checkSingleArticleProperties(article)
@@ -314,24 +317,17 @@ function checkSingleArticleProperties(article) {
     article.keywords.should.be.array
 }
 
-function checkKeywords(oldWords, updatedWords, vote) {
-    const newKeywordAmount = updatedWords.length
-    const oldKeywordAmount = oldWords.length
-    newKeywordAmount.should.equal(oldKeywordAmount)
-    updatedWords.forEach((word, index) => {
-        checkKeyword(oldWords[index], word, vote)
+function checkKeywords(keywords, amount) {
+    keywords.length.should.be.above(0)
+    keywords.forEach((word, index) => {
+        checkKeyword(word, amount)
     })
 }
 
-function checkKeyword(oldKeyword, newKeyword, vote) {
-    const newLength = newKeyword.votes.length
-    const oldLength = oldKeyword.votes.length
-    newKeyword.word.should.equal(oldKeyword.word)
-    newKeyword.votes.should.be.an('array')
-    newLength.should.equal(oldLength + 1)
-    const latest = newKeyword.votes[newLength - 1].sum
-    const older = oldKeyword.votes[oldLength - 1].sum
-    latest.should.equal(older - vote)
+function checkKeyword(keyword, amount) {
+    keyword.should.have.property('oldSum').be.a('number')
+    keyword.should.have.property('newSum').be.a('number')
+    keyword.newSum.should.equal(keyword.oldSum + amount)
 }
 
 function checkVotesSorted(res) {
