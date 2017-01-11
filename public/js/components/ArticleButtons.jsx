@@ -11,6 +11,7 @@ export default class ArticleButtons extends React.Component {
       clicked: false,
     }
     this.toggleButton = this.toggleButton.bind(this)
+    this.updateGraph = this.updateGraph.bind(this)
   }
 
   componentWillUnmount() {
@@ -58,7 +59,7 @@ export default class ArticleButtons extends React.Component {
         >-</Button>
 
         <Button
-          onClick={() => this.updateGraph()}
+          onClick={this.updateGraph}
           bsSize="small"
         >Show Trend</Button>
       </ButtonToolbar>

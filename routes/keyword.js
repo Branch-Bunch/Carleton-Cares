@@ -4,8 +4,7 @@ const Keyword = require('../models/KeywordModel')
 const router = express.Router()
 
 router.get('/top', (req, res) => {
-  Keyword
-    .find()
+  Keyword.find()
     .lean()
     .then((wordList) => {
       const topWords = wordList.reduce((accumulator, word) => {
@@ -37,19 +36,15 @@ router.get('/top', (req, res) => {
 
 router.get('/:word', (req, res) => {
   const word = req.params.word
-  Keyword.find({ word })
+  Keyword.findOne({ word })
     .lean()
-    .then((wordList) => {
-      if (wordList.length === 0) {
-        res.status(500).send({
-          err: 'word not found',
-          givens: req.params,
-        })
-      } else res.send(wordList)
+    .then((keyword) => {
+      if(!keyword) throw new Error('Word not found')
+      res.send([keyword])
     })
     .catch((err) => {
       res.status(500).send({
-        err,
+        err: err.toString(),
         givens: req.params,
       })
     })
