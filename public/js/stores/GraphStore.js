@@ -1,10 +1,11 @@
 import { EventEmitter } from 'events'
 import dispatcher from '../dispatcher'
+import ActionTypes from '../constants/ActionTypes'
 
 class GraphStore extends EventEmitter {
   constructor() {
     super()
-    this.points = [['TempData', 'TempData'], [1, 1]]
+    this.points = []
   }
 
   setPoints(dataPoints) {
@@ -19,9 +20,10 @@ class GraphStore extends EventEmitter {
 
   handleAction(action) {
     switch (action.type) {
-      case 'UPDATE_GRAPH':
+      case ActionTypes.UPDATE_GRAPH: {
         this.setPoints(action.dataPoints)
         break
+      }
     }
   }
 }
