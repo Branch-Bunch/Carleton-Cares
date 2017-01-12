@@ -66,7 +66,7 @@ function incrementKeyword(word, amount) {
               }
               votes.push(newVote)
               keyword.save()
-              resolve({ word: keyword.word, newSum, oldSum })
+              resolve({ word: keyword.word, newSum, oldSum, id: keyword.id })
             })
             .catch(() => {
               const oldSum = 0
@@ -81,16 +81,13 @@ function incrementKeyword(word, amount) {
                 votes: [newVote],
               })
               keyword.save()
-              resolve({ word: keyword.word, newSum, oldSum })
+              resolve({ word: keyword.word, newSum, oldSum, id: keyword.id })
             })
   })
 }
 
 function incrementKeywords(words, amount) {
-  words.forEach((word, i) => {
-    words[i] = incrementKeyword(word, amount)
-  })
-  return words
+  return words.map(word => incrementKeyword(word, amount))
 }
 
 module.exports = { router, incrementKeywords }

@@ -28,7 +28,7 @@ function getArticleData(id) {
 
 function checkReponse(res) {
   res.should.have.status(200)
-  res.body.should.be.arrary
+  res.body.should.be.an('array')
   res.body.should.not.be.empty
   res.body.length.should.be.at.most(10)
 }
