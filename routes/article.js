@@ -50,8 +50,7 @@ router.post('/vote', (req, res) => {
         .catch((err) => {
             res.status(500).send({
                 err: `Error: ${err}`,
-                givens: req.body
-        givens: req.body,
+             givens: req.body,
       })
     })
 })
