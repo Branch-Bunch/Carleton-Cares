@@ -2,14 +2,49 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const app = require('../server.js')
 
-chai.should()
-chai.use(chaiHttp)
+const should = chai.should()
 
-function checkResponse(res) {
+function postVote(id, vote, old) {
+  return new Promise((resolve) => {
+    chai.request(app)
+            .post('/articles/vote')
+            .send({ id, vote })
+            .end((err, res) => {
+              resolve({ res, old })
+            })
+  })
+}
+
+function getArticleData(id) {
+  return new Promise((resolve, reject) => {
+    chai.request(app)
+            .get(`/articles/${id}`)
+            .end((err, res) => {
+              if (err) reject(err)
+              resolve(res)
+            })
+  })
+}
+
+function checkReponse(res) {
   res.should.have.status(200)
-  res.body.should.be.an('array')
+  res.body.should.be.arrary
   res.body.should.not.be.empty
   res.body.length.should.be.at.most(10)
+}
+
+function checkValidError(res) {
+  res.should.have.status(500)
+  res.body.should.not.be.empty
+  res.body.should.have.property('err')
+  res.body.should.have.property('givens')
+}
+
+function checkVoteResponse(res) {
+  res.should.have.status(200)
+  res.body.should.have.property('keywords').be.an('array')
+  res.body.should.have.property('id').be.a('string')
+  res.body.should.have.property('votes').be.a('number')
 }
 
 function checkSingleArticleProperties(article) {
@@ -30,11 +65,17 @@ function checkArticleProperties(res) {
   })
 }
 
-function checkValidError(res) {
-  res.should.have.status(500)
-  res.body.should.not.be.empty
-  res.body.should.have.property('err')
-  res.body.should.have.property('givens')
+function checkKeyword(keyword, amount) {
+  keyword.should.have.property('oldSum').be.a('number')
+  keyword.should.have.property('newSum').be.a('number')
+  keyword.newSum.should.equal(keyword.oldSum + amount)
+}
+
+function checkKeywords(keywords, amount) {
+  keywords.length.should.be.above(0)
+  keywords.forEach((word) => {
+    checkKeyword(word, amount)
+  })
 }
 
 function checkVotesSorted(res) {
@@ -45,11 +86,11 @@ function checkVotesSorted(res) {
 
 function checkDateSorted(res) {
   const articles = res.body
-  const sorted = articles
-    .every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
+  const sorted = articles.every((val, i, arr) => i === 0 || arr[i - 1].publishedAt >= val.publishedAt)
   sorted.should.be.true
 }
 
+chai.use(chaiHttp)
 
 describe('/articles Route', () => {
   const date = new Date()
@@ -61,21 +102,21 @@ describe('/articles Route', () => {
   describe('GET /articles/top', () => {
     it('should have right format response and right properties in articles', (done) => {
       chai.request(app)
-        .get('/articles/top')
-        .end((err, res) => {
-          checkResponse(res)
-          checkArticleProperties(res)
-          done()
-        })
+                .get('/articles/top')
+                .end((err, res) => {
+                  checkReponse(res)
+                  checkArticleProperties(res)
+                  done()
+                })
     })
 
     it('should be in sorted order from greatest to least', (done) => {
       chai.request(app)
-        .get('/articles/top')
-        .end((err, res) => {
-          checkVotesSorted(res)
-          done()
-        })
+                .get('/articles/top')
+                .end((err, res) => {
+                  checkVotesSorted(res)
+                  done()
+                })
     })
   })
 
@@ -83,146 +124,201 @@ describe('/articles Route', () => {
     it('should respond with single article of same id', (done) => {
       const id = '5846399f9ba87af2501fb035'
       chai.request(app)
-        .get(`/articles/${id}`)
-        .end((err, res) => {
-          checkSingleArticleProperties(res.body)
-          res.body._id.should.equal(id)
-          done()
-        })
+                .get(`/articles/${id}`)
+                .end((err, res) => {
+                  checkSingleArticleProperties(res.body)
+                  res.body._id.should.equal(id)
+                  done()
+                })
     })
 
     it('should respond with an error if an article id is not found', (done) => {
       const fakeId = '5846399f9ba87af2501fb03f'
       chai.request(app)
-        .get(`/articles/${fakeId}`)
-        .end((err, res) => {
-          checkValidError(res)
-          res.body.givens.id.should.equal(fakeId)
-          done()
-        })
+                .get(`/articles/${fakeId}`)
+                .end((err, res) => {
+                  checkValidError(res)
+                  res.body.givens.id.should.equal(fakeId)
+                  done()
+                })
     })
 
     it('should respond with an error if the id supplied is not in the valid id format', (done) => {
       const invalidId = 'notavalidId'
       chai.request(app)
-        .get(`/articles/${invalidId}`)
-        .end((err, res) => {
-          checkValidError(res)
-          res.body.givens.id.should.equal(invalidId)
-          done()
-        })
+                .get(`/articles/${invalidId}`)
+                .end((err, res) => {
+                  checkValidError(res)
+                  res.body.givens.id.should.equal(invalidId)
+                  done()
+                })
     })
   })
 
   describe('GET /articles/top with querys', () => {
     it('should have right format response and right properties in articles', (done) => {
       chai.request(app)
-        .get('/articles/top')
-        .query({ lastVote, lastDate })
-        .end((err, res) => {
-          checkResponse(res)
-          checkArticleProperties(res)
-          done()
-        })
+                .get('/articles/top')
+                .query({ lastVote, lastDate })
+                .end((err, res) => {
+                  checkReponse(res)
+                  checkArticleProperties(res)
+                  done()
+                })
     })
 
     it('should be in sorted order from greatest to least', (done) => {
+      const lastDate = new Date()
+      lastDate.setDate(lastDate.getDate() - 1)
       chai.request(app)
-        .get('/articles/top')
-        .query({ lastVote, lastDate })
-        .end((err, res) => {
-          checkVotesSorted(res)
-          done()
-        })
+                .get('/articles/top')
+                .query({ lastVote, lastDate })
+                .end((err, res) => {
+                  checkVotesSorted(res)
+                  done()
+                })
     })
 
     it('should have votes less than lastVote and publishedAt less than lastDate', (done) => {
       chai.request(app)
-        .get('/articles/top')
-        .query({ lastVote, lastDate })
-        .end((err, res) => {
-          const article = res.body[0]
-          article.votes.should.be.at.most(lastVote)
-          article.publishedAt.should.be.below(lastDate)
-          done()
-        })
+                .get('/articles/top')
+                .query({ lastVote, lastDate })
+                .end((err, res) => {
+                  const article = res.body[0]
+                  article.votes.should.be.at.most(lastVote)
+                  article.publishedAt.should.be.below(lastDate)
+                  done()
+                })
     })
 
     it('should send empty array', (done) => {
       chai.request(app)
-        .get('/articles/top')
-        .query({ lastVote: -999, lastDate: longAgoDate })
-        .end((err, res) => {
-          res.body.should.be.array
-          res.body.should.be.empty
-          done()
-        })
+                .get('/articles/top')
+                .query({ lastVote: -999, lastDate: longAgoDate })
+                .end((err, res) => {
+                  res.body.should.be.array
+                  res.body.should.be.empty
+                  done()
+                })
     })
   })
 
   describe('GET /articles/new', () => {
     it('should have right format response and right properties in articles', (done) => {
       chai.request(app)
-        .get('/articles/new')
-        .end((err, res) => {
-          checkResponse(res)
-          checkArticleProperties(res)
-          done()
-        })
+                .get('/articles/new')
+                .end((err, res) => {
+                  checkReponse(res)
+                  checkArticleProperties(res)
+                  done()
+                })
     })
 
     it('should be in sorted order from newest to oldest', (done) => {
       chai.request(app)
-        .get('/articles/new')
-        .end((err, res) => {
-          checkDateSorted(res)
-          done()
-        })
+                .get('/articles/new')
+                .end((err, res) => {
+                  checkDateSorted(res)
+                  done()
+                })
     })
   })
 
   describe('GET /articles/new with query', () => {
     it('should have right format response and right properties in articles', (done) => {
       chai.request(app)
-        .get('/articles/new')
-        .query({ lastDate })
-        .end((err, res) => {
-          checkResponse(res)
-          checkArticleProperties(res)
-          done()
-        })
+                .get('/articles/new')
+                .query({ lastDate })
+                .end((err, res) => {
+                  checkReponse(res)
+                  checkArticleProperties(res)
+                  done()
+                })
     })
 
     it('should be in sorted order from newest to oldest', (done) => {
       chai.request(app)
-        .get('/articles/new')
-        .query({ lastDate })
-        .end((err, res) => {
-          checkDateSorted(res)
-          done()
-        })
+                .get('/articles/new')
+                .query({ lastDate })
+                .end((err, res) => {
+                  checkDateSorted(res)
+                  done()
+                })
     })
 
     it('should have date less than lastDate', (done) => {
       chai.request(app)
-        .get('/articles/new')
-        .query({ lastDate })
-        .end((err, res) => {
-          const article = res.body[0]
-          article.publishedAt.should.be.below(lastDate)
-          done()
-        })
+                .get('/articles/new')
+                .query({ lastDate })
+                .end((err, res) => {
+                  const article = res.body[0]
+                  article.publishedAt.should.be.below(lastDate)
+                  done()
+                })
     })
 
     it('should send empty array', (done) => {
       chai.request(app)
-        .get('/articles/new')
-        .query({ lastDate: longAgoDate })
-        .end((err, res) => {
-          res.body.should.be.array
-          res.body.should.be.empty
-          done()
-        })
+                .get('/articles/new')
+                .query({ lastDate: longAgoDate })
+                .end((err, res) => {
+                  res.body.should.be.array
+                  res.body.should.be.empty
+                  done()
+                })
+    })
+  })
+
+  describe('POST /articles/vote', () => {
+    const id = '5846399f9ba87af2501fb035'
+    const fakeId = '5846399f9ba87af2501fb03f'
+    const test = getArticleData(id)
+
+    it('should respond with the changed information when a valid positive vote is supplied', (done) => {
+      test.then(articleResponse => articleResponse.body)
+                .then(oldArticle => postVote(id, 1, oldArticle))
+                .then((voteResponse) => {
+                  checkVoteResponse(voteResponse.res)
+                  checkKeywords(voteResponse.res.body.keywords, 1)
+                  voteResponse.res.body.id.should.equal(id)
+                  voteResponse.res.body.votes.should.equal(voteResponse.old.votes + 1)
+                  done()
+                })
+                .catch(err => done(err))
+    })
+
+    it('should respond with the changed information when a valid negative vote is supplied', (done) => {
+      test.then(() => getArticleData(id))
+                .then(articleResponse => articleResponse.body)
+                .then(oldArticle => postVote(id, -1, oldArticle))
+                .then((voteResponse) => {
+                  checkVoteResponse(voteResponse.res)
+                  checkKeywords(voteResponse.res.body.keywords, -1)
+                  voteResponse.res.body.id.should.equal(id)
+                  voteResponse.res.body.votes.should.equal(voteResponse.old.votes - 1)
+                  done()
+                })
+                .catch(err => done(err))
+    })
+
+    it('should respond with an error when an invalid id is supplied', (done) => {
+      test.then(() => postVote(fakeId, 1, 'error'))
+                .then((errorResponse) => {
+                  checkValidError(errorResponse.res)
+                  errorResponse.res.body.givens.id.should.equal(fakeId)
+                  done()
+                })
+                .catch(err => done(err))
+    })
+
+    it('should respond with an error when an invalid vote is supplied', (done) => {
+      test.then(() => postVote(id, 'badVote', 'error'))
+                .then((errorResponse) => {
+                  checkValidError(errorResponse.res)
+                  errorResponse.res.body.givens.id.should.equal(id)
+                  done()
+                })
+                .catch(err => done(err))
     })
   })
 })
