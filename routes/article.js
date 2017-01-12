@@ -1,6 +1,6 @@
 const express = require('express')
-const Article = require('../models/ArticleModel.js')
-const incrementKeywords = require('./keyword.js').incrementKeywords
+const Article = require('../models/ArticleModel')
+const incrementKeywords = require('./keyword').incrementKeywords
 
 const router = express.Router()
 
@@ -30,28 +30,28 @@ router.post('/vote', (req, res) => {
   }
 
   Article.findById(req.body.id)
-        .then((article) => {
-          if (!article) throw new Error('Article not found')
-          article.votes += amount
-          return article.save()
-        })
-        .then((data) => {
-          Promise.all(incrementKeywords(data.keywords, amount))
-                .then((keywords) => {
-                  res.send({
-                    votes: data.votes,
-                    id: data.id,
-                    keywords,
-                  })
-                })
-                .catch(err => new Error(err.message))
-        })
-        .catch((err) => {
-          res.status(500).send({
-            err: err.toString(),
-            givens: req.body,
+    .then((article) => {
+      if (!article) throw new Error('Article not found')
+      article.votes += amount
+      return article.save()
+    })
+    .then((data) => {
+      Promise.all(incrementKeywords(data.keywords, amount))
+        .then((keywords) => {
+          res.send({
+            votes: data.votes,
+            id: data.id,
+            keywords,
           })
         })
+        .catch(err => new Error(err.message))
+    })
+    .catch((err) => {
+      res.status(500).send({
+        err: err.toString(),
+        givens: req.body,
+      })
+    })
 })
 
 router.get('/top', (req, res) => {
