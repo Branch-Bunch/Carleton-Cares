@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const Article = require('../models/ArticleModel.js')
 const incrementKeywords = require('./keyword.js').incrementKeywords
 
@@ -21,38 +20,38 @@ function getAmount(vote) {
 }
 
 router.post('/vote', (req, res) => {
-    let amount = getAmount(req.body.vote)
-    if (!amount) {
-        res.status(500).send({
-            err: "Invalid value for vote",
-            givens: req.body
-        })
-        return
-    }
+  const amount = getAmount(req.body.vote)
+  if (!amount) {
+    res.status(500).send({
+      err: 'Invalid value for vote',
+      givens: req.body,
+    })
+    return
+  }
 
-    Article.findById(req.body.id)
+  Article.findById(req.body.id)
         .then((article) => {
-            if (!article) throw new Error('Article not found')
-            article.votes += amount
-            return article.save()
+          if (!article) throw new Error('Article not found')
+          article.votes += amount
+          return article.save()
         })
         .then((data) => {
-            Promise.all(incrementKeywords(data.keywords, amount))
+          Promise.all(incrementKeywords(data.keywords, amount))
                 .then((keywords) => {
-                    res.send({
-                        votes: data.votes,
-                        id: data.id,
-                        keywords
-                    })
+                  res.send({
+                    votes: data.votes,
+                    id: data.id,
+                    keywords,
+                  })
                 })
-                .catch(err =>  new Error('Keywords were not able to be modified'))
+                .catch(err => new Error(err.message))
         })
         .catch((err) => {
-            res.status(500).send({
-                err: `Error: ${err}`,
-             givens: req.body,
-      })
-    })
+          res.status(500).send({
+            err: err.toString(),
+            givens: req.body,
+          })
+        })
 })
 
 router.get('/top', (req, res) => {
