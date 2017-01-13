@@ -29,13 +29,15 @@ router.post('/vote', (req, res) => {
     return
   }
 
-  Article.findById(req.body.id)
-    .then((article) => {
-      if (!article) throw new Error('Article not found')
-      article.votes += amount
-      return article.save()
+  Article.findByIdAndUpdate(
+    req.body.id,
+    { $inc: { votes: amount } },
+    {
+      new: true,
+      runValidators: true,
     })
     .then((article) => {
+      if (!article) throw new Error('Article not found')
       Promise.all(article.keywords.map(keyword => incrementKeyword(keyword, amount)))
         .then((keywords) => {
           res.send({

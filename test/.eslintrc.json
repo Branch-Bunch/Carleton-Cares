@@ -2,6 +2,7 @@
   "rules": {
     "no-unused-expressions": "off",
     "max-len": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "no-shadow": "off"
   }
 }
