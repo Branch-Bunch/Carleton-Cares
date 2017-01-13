@@ -3,14 +3,15 @@ const chaiHttp = require('chai-http')
 const app = require('../server')
 
 const should = chai.should()
+chai.use(chaiHttp)
 
-function postVote(id, vote, old) {
+function postVote(id, vote) {
   return new Promise((resolve) => {
     chai.request(app)
       .post('/articles/vote')
       .send({ id, vote })
       .end((err, res) => {
-        resolve({ res, old })
+        resolve(res)
       })
   })
 }
@@ -90,14 +91,14 @@ function checkDateSorted(res) {
   sorted.should.be.true
 }
 
-chai.use(chaiHttp)
-
 describe('/articles Route', () => {
   const date = new Date()
   date.setDate(date.getDate() - 1)
   const lastDate = date.toISOString()
   const longAgoDate = new Date('1/1/2000').toISOString()
   const lastVote = 1
+  const id = '5846399f9ba87af2501fb035'
+  const fakeId = '5846399f9ba87af2501fb03f'
 
   describe('GET /articles/top', () => {
     it('should have right format response and right properties in articles', (done) => {
@@ -122,7 +123,6 @@ describe('/articles Route', () => {
 
   describe('GET /articles/:id', () => {
     it('should respond with single article of same id', (done) => {
-      const id = '5846399f9ba87af2501fb035'
       chai.request(app)
         .get(`/articles/${id}`)
         .end((err, res) => {
@@ -133,7 +133,6 @@ describe('/articles Route', () => {
     })
 
     it('should respond with an error if an article id is not found', (done) => {
-      const fakeId = '5846399f9ba87af2501fb03f'
       chai.request(app)
         .get(`/articles/${fakeId}`)
         .end((err, res) => {
@@ -270,52 +269,59 @@ describe('/articles Route', () => {
   })
 
   describe('POST /articles/vote', () => {
-    const id = '5846399f9ba87af2501fb035'
-    const fakeId = '5846399f9ba87af2501fb03f'
-    const test = getArticleData(id)
+    let initialArticle = null
+    const articlePromise = getArticleData(id)
 
     it('should respond with the changed information when a valid positive vote is supplied', (done) => {
-      test.then(articleResponse => articleResponse.body)
-        .then(oldArticle => postVote(id, 1, oldArticle))
+      articlePromise
+        .then((articleResponse) => {
+          initialArticle = articleResponse.body
+          return postVote(id, 1)
+        })
         .then((voteResponse) => {
-          checkVoteResponse(voteResponse.res)
-          checkKeywordResponse(voteResponse.res.body.keywords, 1)
-          voteResponse.res.body.id.should.equal(id)
-          voteResponse.res.body.votes.should.equal(voteResponse.old.votes + 1)
+          checkVoteResponse(voteResponse)
+          checkKeywordResponse(voteResponse.body.keywords, 1)
+          voteResponse.body.id.should.equal(id)
+          voteResponse.body.votes.should.equal(initialArticle.votes + 1)
           done()
         })
         .catch(err => done(err))
     })
 
     it('should respond with the changed information when a valid negative vote is supplied', (done) => {
-      test.then(() => getArticleData(id))
-        .then(articleResponse => articleResponse.body)
-        .then(oldArticle => postVote(id, -1, oldArticle))
+      articlePromise
+        .then(() => getArticleData(id))
+        .then((articleResponse) => {
+          initialArticle = articleResponse.body
+          return postVote(id, -1)
+        })
         .then((voteResponse) => {
-          checkVoteResponse(voteResponse.res)
-          checkKeywordResponse(voteResponse.res.body.keywords, -1)
-          voteResponse.res.body.id.should.equal(id)
-          voteResponse.res.body.votes.should.equal(voteResponse.old.votes - 1)
+          checkVoteResponse(voteResponse)
+          checkKeywordResponse(voteResponse.body.keywords, -1)
+          voteResponse.body.id.should.equal(id)
+          voteResponse.body.votes.should.equal(initialArticle.votes - 1)
           done()
         })
         .catch(err => done(err))
     })
 
     it('should respond with an error when an invalid id is supplied', (done) => {
-      test.then(() => postVote(fakeId, 1, 'error'))
+      articlePromise
+        .then(() => postVote(fakeId, 1))
         .then((errorResponse) => {
-          checkValidError(errorResponse.res)
-          errorResponse.res.body.givens.id.should.equal(fakeId)
+          checkValidError(errorResponse)
+          errorResponse.body.givens.id.should.equal(fakeId)
           done()
         })
         .catch(err => done(err))
     })
 
     it('should respond with an error when an invalid vote is supplied', (done) => {
-      test.then(() => postVote(id, 'badVote', 'error'))
+      articlePromise
+        .then(() => postVote(id, 'badVote'))
         .then((errorResponse) => {
-          checkValidError(errorResponse.res)
-          errorResponse.res.body.givens.id.should.equal(id)
+          checkValidError(errorResponse)
+          errorResponse.body.givens.id.should.equal(id)
           done()
         })
         .catch(err => done(err))
