@@ -70,12 +70,8 @@ function incrementKeyword(word, amount) {
         keyword.save()
         resolve({ word: keyword.word, newSum, oldSum, id: keyword.id })
       })
-      .catch(err => new Error(err.message))
+      .catch(err => err)
   })
 }
 
-function incrementKeywords(words, amount) {
-  return words.map(word => incrementKeyword(word, amount))
-}
-
-module.exports = { router, incrementKeywords }
+module.exports = { router, incrementKeyword }
