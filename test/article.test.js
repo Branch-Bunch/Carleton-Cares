@@ -35,7 +35,7 @@ function checkReponse(res) {
 }
 
 function checkValidError(res) {
-  res.should.have.status(500)
+  res.should.not.have.status(200)
   res.body.should.not.be.empty
   res.body.should.have.property('err')
   res.body.should.have.property('givens')
@@ -73,7 +73,7 @@ function checkKeyword(keyword, amount) {
 }
 
 function checkKeywordResponse(keywords, amount) {
-  keywords.length.should.be.above(0)
+  keywords.should.not.be.empty
   keywords.forEach((word) => {
     checkKeyword(word, amount)
   })

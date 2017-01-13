@@ -1,6 +1,6 @@
 const express = require('express')
 const Article = require('../models/ArticleModel')
-const incrementKeywords = require('./keyword').incrementKeywords
+const incrementKeyword = require('./keyword').incrementKeyword
 
 const router = express.Router()
 
@@ -35,16 +35,16 @@ router.post('/vote', (req, res) => {
       article.votes += amount
       return article.save()
     })
-    .then((data) => {
-      Promise.all(incrementKeywords(data.keywords, amount))
+    .then((article) => {
+      Promise.all(article.keywords.map(keyword => incrementKeyword(keyword, amount)))
         .then((keywords) => {
           res.send({
-            votes: data.votes,
-            id: data.id,
+            votes: article.votes,
+            id: article.id,
             keywords,
           })
         })
-        .catch(err => new Error(err.message))
+        .catch(err => err)
     })
     .catch((err) => {
       res.status(500).send({
