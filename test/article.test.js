@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const app = require('../server')
 
-const should = chai.should()
+chai.should()
 chai.use(chaiHttp)
 
 function postVote(id, vote) {
@@ -17,17 +17,16 @@ function postVote(id, vote) {
 }
 
 function getArticleData(id) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     chai.request(app)
       .get(`/articles/${id}`)
       .end((err, res) => {
-        if (err) reject(err)
         resolve(res)
       })
   })
 }
 
-function checkReponse(res) {
+function checkResponse(res) {
   res.should.have.status(200)
   res.body.should.be.an('array')
   res.body.should.not.be.empty
@@ -105,7 +104,7 @@ describe('/articles Route', () => {
       chai.request(app)
         .get('/articles/top')
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })
@@ -160,15 +159,13 @@ describe('/articles Route', () => {
         .get('/articles/top')
         .query({ lastVote, lastDate })
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })
     })
 
     it('should be in sorted order from greatest to least', (done) => {
-      const lastDate = new Date()
-      lastDate.setDate(lastDate.getDate() - 1)
       chai.request(app)
         .get('/articles/top')
         .query({ lastVote, lastDate })
@@ -207,7 +204,7 @@ describe('/articles Route', () => {
       chai.request(app)
         .get('/articles/new')
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })
@@ -229,7 +226,7 @@ describe('/articles Route', () => {
         .get('/articles/new')
         .query({ lastDate })
         .end((err, res) => {
-          checkReponse(res)
+          checkResponse(res)
           checkArticleProperties(res)
           done()
         })
