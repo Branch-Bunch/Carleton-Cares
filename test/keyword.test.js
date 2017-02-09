@@ -39,7 +39,10 @@ describe('keyword unit tests', () => {
   describe('incrementKeyword', () => {
     const words = ['panda', 'trump']
     it('should increment the votes for all of the words specified', (done) => {
-      done()
+      Promise.all(words.map((word, vote) => incrementKeywords(word, vote)))
+        .then(result => console.log(result))
+        .then(() => done())
+        .catch(err => done(err))
     })
   })
 })
