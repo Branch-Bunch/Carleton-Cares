@@ -1,6 +1,7 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const app = require('../server.js')
+const incrementKeyword = require('../routes/keyword.js').incrementKeyword
 
 chai.use(chaiHttp)
 
@@ -34,6 +35,14 @@ function checkValidError(res) {
   res.body.should.have.property('givens')
 }
 
+describe('keyword unit tests', () => {
+  describe('incrementKeyword', () => {
+    const words = ['panda', 'trump']
+    it('should increment the votes for all of the words specified', (done) => {
+      done()
+    })
+  })
+})
 
 describe('/keywords Route', () => {
   describe('GET /keywords/top', () => {
