@@ -5,7 +5,6 @@ const incrementKeyword = require('../routes/keyword.js').incrementKeyword
 
 chai.use(chaiHttp)
 
-
 function checkResponse(res) {
   res.should.have.status(200)
   res.body.should.be.an('array')
@@ -35,15 +34,43 @@ function checkValidError(res) {
   res.body.should.have.property('givens')
 }
 
+function checkKeywordAfterIncrement(first, last, vote) {
+  first._id.should.equal(last.id)
+  const len = first.votes.length
+  first.votes[len - 1].sum.should.equal(last.oldSum)
+  first.votes[len - 1].sum.should.equal(last.newSum - vote)
+}
+
+function getKeywordData(word) {
+  return new Promise((resolve) => {
+    chai.request(app)
+      .get(`/keywords/${word}`)
+      .end((err, res) => {
+        resolve(res)
+      })
+  })
+}
+
 describe('keyword unit tests', () => {
   describe('incrementKeyword', () => {
-    const words = ['panda', 'trump']
-    it('should increment the votes for all of the words specified', (done) => {
-      Promise.all(words.map((word, vote) => incrementKeywords(word, vote)))
-        .then(result => console.log(result))
-        .then(() => done())
+    const word = 'panda'
+    const wordDataPromise = getKeywordData(word)
+
+    it('should increment the votes for one keyword', (done) => {
+      let initialKeyword = {}
+      wordDataPromise
+        .then(keywordResponse => {
+          initialKeyword = keywordResponse.body[0]
+          console.log(initialKeyword)
+          return incrementKeyword(initialKeyword.word, 1)
+        })
+        .then(result => {
+          checkKeywordAfterIncrement(initialKeyword, result, 1)
+          done()
+        })
         .catch(err => done(err))
     })
+
   })
 })
 
