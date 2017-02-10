@@ -51,15 +51,12 @@ router.get('/:word', (req, res) => {
 })
 
 function incrementKeyword(word, amount) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     Keyword.findOne({ word })
       .then((keyword) => {
         let oldSum = 0
         if (!keyword) {
-          keyword = new Keyword({
-            word,
-            votes: [],
-          })
+          reject(new Error('Word not found in database'))
         } else {
           const len = keyword.votes.length
           oldSum = keyword.votes[len - 1].sum
