@@ -55,22 +55,45 @@ describe('keyword unit tests', () => {
   describe('incrementKeyword', () => {
     const word = 'panda'
     const wordDataPromise = getKeywordData(word)
+    const fakeWord = 'no-real-word-here'
 
     it('should increment the votes for one keyword', (done) => {
       let initialKeyword = {}
       wordDataPromise
-        .then(keywordResponse => {
+        .then((keywordResponse) => {
           initialKeyword = keywordResponse.body[0]
-          console.log(initialKeyword)
           return incrementKeyword(initialKeyword.word, 1)
         })
-        .then(result => {
-          checkKeywordAfterIncrement(initialKeyword, result, 1)
+        .then((incrementedResponse) => {
+          checkKeywordAfterIncrement(initialKeyword, incrementedResponse, 1)
           done()
         })
         .catch(err => done(err))
     })
 
+    it('should decrement the votes for one keyword', (done) => {
+      let initialKeyword = {}
+      wordDataPromise
+        .then(() => getKeywordData(word))
+        .then((keywordResponse) => {
+          initialKeyword = keywordResponse.body[0]
+          return incrementKeyword(initialKeyword.word, -1)
+        })
+        .then((incrementedResponse) => {
+          checkKeywordAfterIncrement(initialKeyword, incrementedResponse, -1)
+          done()
+        })
+        .catch(err => done(err))
+    })
+
+    it('should fail for a word that is not in the database', (done) => {
+      incrementKeyword(fakeWord, 1)
+        .then(response => done(new Error(`Responded properly when it was expected to fail: {response}`)))
+        .catch((err) => {
+          err.should.have.property('message').be.a('string')
+          done()
+        })
+    })
   })
 })
 
@@ -110,7 +133,7 @@ describe('/keywords Route', () => {
 
   describe('GET /keywords/:word', () => {
     const testWord = 'panda'
-    const fakeWord = 'fak3w0rd'
+    const fakeWord = 'this-is-not-real'
     it('should be a non empty array', (done) => {
       chai.request(app)
         .get(`/keywords/${testWord}`)
