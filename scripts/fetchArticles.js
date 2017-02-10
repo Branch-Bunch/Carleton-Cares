@@ -48,6 +48,7 @@ function updateNews() {
 }
 
 module.exports.startFetchCycle = () => {
+  updateNews()
   setInterval(() => {
     updateNews()
   }, REFRESH)
