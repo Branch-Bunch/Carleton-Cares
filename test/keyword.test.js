@@ -89,7 +89,7 @@ describe('keyword unit tests', () => {
 
     it('should fail for a word that is not in the database', (done) => {
       incrementKeyword(fakeWord, 1)
-        .then(response => done(new Error(`Responded properly when it was expected to fail: {response}`)))
+        .then(() => done(new Error('Responded properly when it was expected to fail')))
         .catch((err) => {
           err.should.have.property('message').be.a('string')
           done()
