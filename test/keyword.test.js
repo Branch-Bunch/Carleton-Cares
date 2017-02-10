@@ -42,10 +42,11 @@ function checkKeywordAfterIncrement(first, last, vote) {
 }
 
 function getKeywordData(word) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     chai.request(app)
       .get(`/keywords/${word}`)
       .end((err, res) => {
+        if (err) reject(err)
         resolve(res)
       })
   })
