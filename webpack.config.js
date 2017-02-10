@@ -16,11 +16,11 @@ module.exports = {
   },
   eslint: { configFile: './.eslintrc.json' },
   module: {
-    preLoaders: [{
+    preLoaders: (debug) ? [{
       test: /.jsx?$/,
       exclude: /node_modules/,
       loader: 'eslint-loader',
-    }],
+    }] : [],
     loaders: [{
       test: /.jsx?$/,
       exclude: /node_modules/,
