@@ -6,6 +6,7 @@ const Article = require('../models/ArticleModel')
 
 // 3 600 000 is 1 hour
 const REFRESH = 3600000
+const longAgoDate = new Date('1/1/2000').toISOString()
 
 function sanitize(string) {
   const newString = string.toLowerCase()
@@ -30,6 +31,7 @@ function getPhrases(article) {
 
 function mapArticleToUpdatedArticle(article) {
   return new Promise((resolve, reject) => {
+    if (article.publishedAt <= longAgoDate) article.publishedAt = new Date()
     Article.findOneAndUpdate({
       url: article.url,
     }, {
