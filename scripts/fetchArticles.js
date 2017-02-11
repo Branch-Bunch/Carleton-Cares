@@ -31,14 +31,14 @@ function getPhrases(article) {
 function mapArticleToUpdatedArticle(article) {
   return new Promise((resolve, reject) => {
     Article.findOneAndUpdate({
-      url: article.url
+      url: article.url,
     }, {
-      author: '$author',
-      title: '$title',
-      description: '$description',
-      url: '$url',
-      urlToImage: '$urlToImage',
-      publishedAt: '$publishedAt',
+      author: article.author,
+      title: article.title,
+      description: article.description,
+      url: article.url,
+      urlToImage: article.urlToImage,
+      publishedAt: article.publishedAt,
       keywords: getPhrases(article),
       votes: 0,
     }, {
@@ -56,7 +56,7 @@ function updateNews() {
     .then((res) => {
       const articles = JSON.parse(res).articles
       Promise.all(articles.map(mapArticleToUpdatedArticle))
-        .then(result => console.log(result))
+        .then(() => {})
         .catch(err => err)
     })
     .catch(err => err)
