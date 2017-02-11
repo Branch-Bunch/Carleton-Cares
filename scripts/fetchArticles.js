@@ -9,9 +9,9 @@ const REFRESH = 3600000
 const longAgoDate = new Date('1/1/2000').toISOString()
 
 function sanitize(string) {
-  const newString = string.toLowerCase()
-  // Removes all punctuation
-  return newString.replace(/[^0-9a-z ]/g, '')
+  // Removes all punctuation, sets spaces to hyphens, lowers the case
+  const newString = string.toLowerCase().replace(/[^0-9a-z ]/g, '')
+  return newString.replace(/\s+/g, '-')
 }
 
 function getPhrases(article) {
