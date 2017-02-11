@@ -31,7 +31,8 @@ function getPhrases(article) {
 
 function mapArticleToUpdatedArticle(article) {
   return new Promise((resolve, reject) => {
-    if (article.publishedAt <= longAgoDate) article.publishedAt = new Date()
+    const publishedAt = (article.publishedAt >= longAgoDate) ?
+      article.publishedAt : (new Date()).toIsoString()
     Article.findOneAndUpdate({
       url: article.url,
     }, {
@@ -40,7 +41,7 @@ function mapArticleToUpdatedArticle(article) {
       description: article.description,
       url: article.url,
       urlToImage: article.urlToImage,
-      publishedAt: article.publishedAt,
+      publishedAt,
       keywords: getPhrases(article),
       votes: 0,
     }, {
