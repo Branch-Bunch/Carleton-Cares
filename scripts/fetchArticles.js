@@ -28,28 +28,41 @@ function getPhrases(article) {
   return words
 }
 
+function mapArticleToUpdatedArticle(article) {
+  return new Promise((resolve, reject) => {
+    Article.findOneAndUpdate({
+      url: article.url
+    }, {
+      author: '$author',
+      title: '$title',
+      description: '$description',
+      url: '$url',
+      urlToImage: '$urlToImage',
+      publishedAt: '$publishedAt',
+      keywords: getPhrases(article),
+      votes: 0,
+    }, {
+      new: true,
+      upsert: true,
+      runValidators: true,
+    })
+      .then(newArticle => resolve(newArticle))
+      .catch(err => reject(err))
+  })
+}
+
 function updateNews() {
   request(process.env.NEWS_URI)
     .then((res) => {
-      const headlines = JSON.parse(res).articles
-      headlines.forEach((old) => {
-        Article.findOne({ url: old.url })
-          .then((article) => {
-            if (article) return
-            const newArticle = new Article(old)
-            newArticle.keywords = getPhrases(article)
-            newArticle.votes = 0
-            newArticle.save()
-          })
-          .catch(err => err)
-      })
+      const articles = JSON.parse(res).articles
+      Promise.all(articles.map(mapArticleToUpdatedArticle))
+        .then(result => console.log(result))
+        .catch(err => err)
     })
     .catch(err => err)
 }
 
 module.exports.startFetchCycle = () => {
   updateNews()
-  setInterval(() => {
-    updateNews()
-  }, REFRESH)
+  setInterval(updateNews, REFRESH)
 }
