@@ -26,9 +26,6 @@ export default class GraphActions {
           dataPoints,
         })
       })
-      .catch((err) => {
-        console.log('Error updating graph', err)
-        // TODO: do somthing with error
-      })
+      .catch(err => err)
   }
 }
