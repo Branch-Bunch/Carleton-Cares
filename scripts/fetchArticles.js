@@ -65,7 +65,9 @@ function updateNews() {
     .catch(err => err)
 }
 
-module.exports.startFetchCycle = () => {
+function startFetchCycle() {
   updateNews()
   setInterval(updateNews, REFRESH)
 }
+
+module.exports = { startFetchCycle, sanitize }
