@@ -32,7 +32,7 @@ function getPhrases(article) {
 function mapArticleToUpdatedArticle(article) {
   return new Promise((resolve, reject) => {
     const publishedAt = (article.publishedAt >= longAgoDate) ?
-      article.publishedAt : (new Date()).toIsoString()
+      article.publishedAt : (new Date()).toISOString()
     Article.findOneAndUpdate({
       url: article.url,
     }, {
@@ -70,4 +70,4 @@ function startFetchCycle() {
   setInterval(updateNews, REFRESH)
 }
 
-module.exports = { startFetchCycle, sanitize }
+module.exports = { startFetchCycle, sanitize, mapArticleToUpdatedArticle }
