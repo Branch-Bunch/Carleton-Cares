@@ -1,6 +1,5 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const app = require('../server')
 const Article = require('../models/ArticleModel')
 const sanitize = require('../scripts/fetchArticles').sanitize
 const mapArticleToUpdatedArticle = require('../scripts/fetchArticles').mapArticleToUpdatedArticle
@@ -41,12 +40,12 @@ describe('fetchArticles unit tests', () => {
       url: 'some-url',
       urlToImage: 'https://upload.wikimedia.org/wikipedia/en/6/60/Jason_bourne_infobox.jpg',
       publishedAt: '0001-01-01T00:00:00Z',
-      keywords: [ 'JSON-Bourne', 'movies' ],
+      keywords: ['JSON-Bourne', 'movies'],
     }
 
     it('should have a recent date if the date supplied is before 2000', (done) => {
       mapArticleToUpdatedArticle(testArticle)
-        .then(newArticle => {
+        .then((newArticle) => {
           checkSingleArticleProperties(newArticle)
           const newDate = new Date(newArticle.publishedAt).toISOString()
           newDate.should.be.above(longAgoDate)
@@ -57,7 +56,7 @@ describe('fetchArticles unit tests', () => {
 
     it('should have the votes property added, and initialized to 0', (done) => {
       mapArticleToUpdatedArticle(testArticle)
-        .then(newArticle => {
+        .then((newArticle) => {
           checkSingleArticleProperties(newArticle)
           newArticle.should.have.property('votes').be.a('number').equal(0)
           done()
@@ -67,7 +66,7 @@ describe('fetchArticles unit tests', () => {
 
     it('should exist in the database after being upserted', (done) => {
       Article.findOne({ url: testArticle.url })
-        .then(newArticle => {
+        .then((newArticle) => {
           newArticle.should.not.be.null
           checkSingleArticleProperties(newArticle)
         })
