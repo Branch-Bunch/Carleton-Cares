@@ -325,3 +325,5 @@ describe('/articles Route', () => {
     })
   })
 })
+
+module.exports = checkSingleArticleProperties
