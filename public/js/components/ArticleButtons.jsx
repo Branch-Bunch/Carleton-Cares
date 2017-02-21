@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, ButtonToolbar } from 'react-bootstrap'
 import ArticleActions from '../actions/ArticleActions'
-import ArticleStore from '../stores/ArticleStore'
 import GraphActions from '../actions/GraphActions'
 
 export default class ArticleButtons extends React.Component {
@@ -21,7 +20,6 @@ export default class ArticleButtons extends React.Component {
   callVote(vote) {
     if (!this.canVote()) return
     ArticleActions.postVote(vote, this.props.id)
-      .then(() => ArticleActions.fetchArticles(ArticleStore.getSort()))
   }
 
   canVote() {
