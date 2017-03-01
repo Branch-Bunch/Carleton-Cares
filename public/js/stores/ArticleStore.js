@@ -24,8 +24,23 @@ class ArticleStore extends EventEmitter {
 
   handleAction(action) {
     switch (action.type) {
+
+      case ActionTypes.ADD_ARTICLES: {
+        this.articles.push(...action.articles)
+        this.emit('articleUpdate')
+        break
+      }
+
       case ActionTypes.UPDATE_ARTICLES: {
         this.articles = action.articles
+        this.emit('articleUpdate')
+        break
+      }
+
+      case ActionTypes.UPDATE_VOTE: {
+        const updateArticle = this.articles.find(article => article.id === action.article.id)
+        updateArticle.votes += 1
+        console.log(updateArticle)
         this.emit('articleUpdate')
         break
       }

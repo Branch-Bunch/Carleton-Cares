@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Row, Col } from 'react-bootstrap'
+import { Grid, Row, Col, Button } from 'react-bootstrap'
 import Article from './Article'
 import SortingBar from './SortingBar'
 import ArticleStore from '../stores/ArticleStore'
@@ -36,7 +36,8 @@ export default class ArticleTable extends React.Component {
   }
 
   render() {
-    const articles = this.state.articles.map((article, index) => (
+    const { articles, sort } = this.state
+    const articleList = articles.map((article, index) => (
       <Article
         {...article}
         key={article._id}
@@ -57,12 +58,19 @@ export default class ArticleTable extends React.Component {
             <h3>#</h3>
           </Col>
           <Col md={5}>
-            <h3>{this.state.sort} Articles</h3>
+            <h3>{sort} Articles</h3>
           </Col>
         </Row>
         <Row>
-          {articles}
+          {articleList}
         </Row>
+        <Col mdOffset={5}>
+          <Row>
+            <Button
+              onClick={() => ArticleActions.fetchArticles(sort, ArticleStore.getLastArticle())}
+            >Load More</Button>
+          </Row>
+        </Col>
       </Grid>
     )
   }
