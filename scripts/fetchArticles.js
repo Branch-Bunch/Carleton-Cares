@@ -3,6 +3,7 @@ const retext = require('retext')
 const retextkeywords = require('retext-keywords')
 const nlcstToString = require('nlcst-to-string')
 const Article = require('../models/ArticleModel')
+const Keyword = require('../models/KeywordModel')
 
 // 3 600 000 is 1 hour
 const REFRESH = 3600000
@@ -29,10 +30,28 @@ function getPhrases(article) {
   return words
 }
 
+function mapKeywordToUpsertedKeyword(word) {
+  return new Promise((resolve, reject) => {
+    Keyword.findOneAndUpdate({
+      word,
+    }, {
+      word,
+      votes: [{ sum: 0, time: Date.now() }],
+    }, {
+      new: true,
+      upsert: true,
+      runValidators: true,
+    })
+      .then(resolve)
+      .catch(reject)
+  })
+}
+
 function mapArticleToUpdatedArticle(article) {
   return new Promise((resolve, reject) => {
     const publishedAt = (article.publishedAt >= longAgoDate) ?
       article.publishedAt : (new Date()).toISOString()
+    const keywords = getPhrases(article)
     Article.findOneAndUpdate({
       url: article.url,
     }, {
@@ -42,15 +61,15 @@ function mapArticleToUpdatedArticle(article) {
       url: article.url,
       urlToImage: article.urlToImage,
       publishedAt,
-      keywords: getPhrases(article),
+      keywords,
       votes: 0,
     }, {
       new: true,
       upsert: true,
       runValidators: true,
     })
-      .then(newArticle => resolve(newArticle))
-      .catch(err => reject(err))
+      .then(resolve)
+      .catch(reject)
   })
 }
 
@@ -59,7 +78,10 @@ function updateNews() {
     .then((res) => {
       const articles = JSON.parse(res).articles
       Promise.all(articles.map(mapArticleToUpdatedArticle))
-        .then(() => {})
+        .then(updatedArticles => updatedArticles.map(article => {
+          article.keywords.map(mapKeywordToUpsertedKeyword)
+        }))
+        .then()
         .catch(err => err)
     })
     .catch(err => err)

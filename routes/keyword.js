@@ -54,6 +54,7 @@ function incrementKeyword(word, amount) {
   return new Promise((resolve, reject) => {
     Keyword.findOne({ word })
       .then((keyword) => {
+        console.log(keyword)
         let oldSum = 0
         if (!keyword) {
           reject(new Error('Word not found in database'))
