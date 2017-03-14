@@ -12,17 +12,19 @@ export default class SortingBar extends React.Component {
   constructor() {
     super()
     this.state = {
-      newActive: null,
-      topActive: null,
+      newActive: true,
+      topActive: false,
     }
+    this.setNewActive = this.setNewActive.bind(this)
+    this.setTopActive = this.setTopActive.bind(this)
   }
 
   setNewActive() {
-    this.setState({ newActive: true, topActive: null })
+    this.setState({ newActive: true, topActive: false })
   }
 
   setTopActive() {
-    this.setState({ newActive: null, topActive: true })
+    this.setState({ newActive: false, topActive: true })
   }
 
   render() {
