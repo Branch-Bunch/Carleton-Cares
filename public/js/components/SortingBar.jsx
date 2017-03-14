@@ -42,11 +42,6 @@ export default class SortingBar extends React.Component {
           bsSize="small"
           active={this.state.topActive}
         >Top</Button>
-        <Button
-          onClick={() => alert('Trending is not avaiable yet')}
-          bsStyle="info"
-          bsSize="small"
-        >Trending</Button>
       </ButtonGroup>
     )
   }
