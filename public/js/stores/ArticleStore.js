@@ -38,8 +38,8 @@ class ArticleStore extends EventEmitter {
       }
 
       case ActionTypes.UPDATE_VOTE: {
-        const updateArticle = this.articles.find(article => article.id === action.article.id)
-        updateArticle.votes += 1
+        const updateArticle = this.articles.find(article => article._id === action.article.id)
+        updateArticle.votes = action.article.votes
         console.log(updateArticle)
         this.emit('articleUpdate')
         break
