@@ -18,7 +18,7 @@ export default class GraphActions {
       .then(res => res.json())
       .then((keyword) => {
         const dataPoints = keyword[0].votes.map(
-        vote => [vote.time, vote.sum],
+        vote => [new Date(parseInt(vote.time, 10)).toDateString(), vote.sum],
         )
         dataPoints.unshift(['Time', keyword[0].word])
         dispatcher.dispatch({
