@@ -22,7 +22,7 @@ router.get('/top', (req, res) => {
         return accumulator
       }, {
         sum: 0,
-        words: [],
+          words: [],
       })
       res.send(topWords.words)
     })
@@ -56,7 +56,19 @@ function incrementKeyword(word, amount) {
       .then((keyword) => {
         let oldSum = 0
         if (!keyword) {
-          reject(new Error('Word not found in database'))
+          const newKeyword = new Keyword({
+            word,
+            votes: [{
+              sum: amount,
+              time: Date.now(),
+            }],
+          })
+          const len = newKeyword.votes.length
+          oldSum = newKeyword.votes[len - 1].sum
+          const newSum = oldSum + amount
+          const newVote = { sum: newSum, time: Date.now() } 
+          newKeyword.save()
+          resolve({ word: newKeyword.word, newSum, oldSum, id: newKeyword.id })
         } else {
           const len = keyword.votes.length
           oldSum = keyword.votes[len - 1].sum
