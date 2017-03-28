@@ -47,14 +47,14 @@ export default class ArticleButtons extends React.Component {
           disabled={this.state.clicked}
           bsStyle="success"
           bsSize="small"
-        >+</Button>
+        >&#128077;</Button>
 
         <Button
           onClick={() => this.callVote(-1)}
           disabled={this.state.clicked}
           bsStyle="danger"
           bsSize="small"
-        >-</Button>
+        >&#128078;</Button>
 
         <Button
           onClick={this.updateGraph}
